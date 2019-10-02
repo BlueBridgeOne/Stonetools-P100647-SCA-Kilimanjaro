@@ -1,0 +1,304 @@
+/*
+  BB1 G Truslove - Nov 2017
+  Knowledge Base Articles
+*/
+
+define('Article.Model', [
+    'SC.Model'
+  ],
+  function(SCModel) {
+    return SCModel.extend({
+      name: 'Article',
+      getSiteCode: function(site) {
+        switch (site) {
+          case "Ireland":
+            return "3";
+          case "France":
+            return "4";
+          case "Global":
+            return "5";
+        }
+        return "2";
+
+      },
+      get: function(url, site, language) {
+        nlapiLogExecution("ERROR", "SCA Testing", "Language=" + language + " Site=" + site);
+        var filters = [],
+          columns = [];
+
+        filters.push(['isinactive', 'is', 'F']);
+        filters.push('AND');
+        filters.push(['custrecord_bb1_sca_a_url', 'is', url]);
+        filters.push('AND');
+        filters.push(['custrecord_bb1_sca_a_language', 'anyof', language.toString()]);
+        if (site) {
+
+          //"@NONE@","1","5"
+
+          filters.push('AND');
+          nlapiLogExecution("ERROR", "SCA Testing", "Match Site=" + site + " " + this.getSiteCode(site));
+          filters.push(['custrecord_147_cseg_bb1_website_se', 'anyof', "@NONE@", "1", this.getSiteCode(site)]);
+        }
+
+
+        columns.push(new nlobjSearchColumn('name'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_type'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_summary'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_keywords'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_content'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_image'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_url'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_language'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_priority'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_colour'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_relateditems'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_relatedarticles'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_relatedcontent'));
+
+
+
+
+
+        var searchresults = nlapiSearchRecord('customrecord_bb1_sca_article', null, filters, columns);
+
+        var res;
+        var Info = {};
+        for (var i in searchresults) {
+          res = searchresults[i];
+          Info = {
+            internalid: res.getId(),
+            name: res.getValue("name"),
+            type: res.getValue("custrecord_bb1_sca_a_type"),
+            summary: res.getValue("custrecord_bb1_sca_a_summary"),
+            keywords: res.getValue("custrecord_bb1_sca_a_keywords"),
+            content: res.getValue("custrecord_bb1_sca_a_content"),
+            relatedcontent: res.getValue("custrecord_bb1_sca_a_relatedcontent"),
+            image: res.getText("custrecord_bb1_sca_a_image"),
+            url: res.getValue("custrecord_bb1_sca_a_url"),
+            language: res.getValue("custrecord_bb1_sca_a_language"),
+            priority: res.getValue("custrecord_bb1_sca_a_priority"),
+            colour: res.getValue("custrecord_bb1_sca_a_colour"),
+            relateditems: res.getValue("custrecord_bb1_sca_a_relateditems"),
+            relatedarticles: this.getRelatedArticles(res.getValue("custrecord_bb1_sca_a_relatedarticles"), site, language)
+          };
+          break;
+        }
+        return Info;
+      },
+      getRelatedArticles: function(articles, site, language) { //Get related article links
+        if (!articles || articles.length == 0) {
+          return [];
+        }
+        var filters = [],
+          columns = [];
+
+
+        filters.push(['isinactive', 'is', 'F']);
+        filters.push('AND');
+        filters.push(['internalid', 'anyof', articles.split(',')]);
+        filters.push('AND');
+        filters.push(['custrecord_bb1_sca_a_language', 'anyof', language.toString()]);
+        filters.push('AND');
+        filters.push(['custrecord_bb1_sca_a_approved', 'is', 'T']);
+        if (site) {
+          filters.push('AND');
+          filters.push(['custrecord_147_cseg_bb1_website_se', 'anyof', "@NONE@", "1", this.getSiteCode(site)]);
+        }
+
+
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_url'));
+        columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_type'));
+
+        var SC = new nlobjSearchColumn('name');
+        SC.setSort(false);
+        columns.push(SC);
+
+        var searchresults = nlapiSearchRecord('customrecord_bb1_sca_article', null, filters, columns);
+
+        var res;
+        var List = [];
+        for (var i in searchresults) {
+          res = searchresults[i];
+          List.push({
+            internalid: res.getId(),
+            name: res.getValue("name"),
+            type: res.getValue("custrecord_bb1_sca_a_type"),
+            url: res.getValue("custrecord_bb1_sca_a_url"),
+          });
+
+        }
+
+        return List;
+      },
+      higherPriority: function(priority) { //This priority should be pushed up the page
+
+
+        var priorities = { LargeBanner: 1, MediumImage: 2, Standard: 3, Archive: 4, Hidden: 5, HomePageBanner: 6, HomePageText: 7, HomePageImage: 8 };
+
+        return priority == priorities.LargeBanner || priority == priorities.MediumImage || priority == priorities.HomePageBanner || priority == priorities.HomePageText || priority == priorities.HomePageImage;
+      },
+      list: function(Type, site, language, showonhomepage) {
+
+        try {
+          var filters = [],
+            columns = [];
+          var OnlyOneType = Type && Type.length == 1;
+
+
+          filters.push(['isinactive', 'is', 'F']);
+          filters.push('AND');
+          filters.push(['custrecord_bb1_sca_a_language', 'anyof', language.toString()]);
+          filters.push('AND');
+          filters.push(['custrecord_bb1_sca_a_approved', 'is', 'T']);
+          if (site) {
+            filters.push('AND');
+            filters.push(['custrecord_147_cseg_bb1_website_se', 'anyof', "@NONE@", "1", this.getSiteCode(site)]);
+          }
+
+          if (showonhomepage) {
+            filters.push('AND');
+            filters.push(['custrecord_bb1_sca_a_showonhomepage', 'is', 'T']);
+          } else {
+            if (Type && Type.length > 0) {
+              if (Type.length == 1) {
+                filters.push('AND');
+                filters.push(['custrecord_bb1_sca_a_type', 'anyof', Type]);
+                filters.push('AND');
+                filters.push(['custrecord_bb1_sca_a_priority', 'anyof', [1, 2, 3, 4,6,7,8]]);
+              } else if (Type.length > 1) {
+                filters.push('AND');
+                filters.push(['custrecord_bb1_sca_a_type', 'anyof', Type]);
+                filters.push('AND');
+                filters.push(['custrecord_bb1_sca_a_priority', 'anyof', [1, 2,3, 6,7,8]]);
+              }
+            }
+          }
+          columns.push(new nlobjSearchColumn('name'));
+          columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_image'));
+          columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_url'));
+          columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_colour'));
+          columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_priority'));
+
+          if (showonhomepage) {
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_homepagewidth'));
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_content'));
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_buttontext'));
+          } else {
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_pagewidth'));
+          }
+
+          var SC;
+
+          if (showonhomepage) {
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_type'));
+            columns.push(new nlobjSearchColumn('custrecord_bb1_sca_a_priority'));
+
+            SC = new nlobjSearchColumn('custrecord_bb1_sca_a_homepageorder');
+            SC.setSort(false);
+            columns.push(SC);
+          } else {
+
+            var SC = new nlobjSearchColumn('custrecord_bb1_sca_a_type');
+            SC.setSort(false);
+            columns.push(SC);
+
+            SC = new nlobjSearchColumn('custrecord_bb1_sca_a_order');
+            SC.setSort(false);
+            columns.push(SC);
+          }
+
+
+
+
+
+          var searchresults = nlapiSearchRecord('customrecord_bb1_sca_article', null, filters, columns);
+
+//sort by priority
+var res, newarticle;
+
+          if (!showonhomepage) {
+            var swap, changed;
+            do {
+              changed = false;
+              for (var i = 0; i < searchresults.length - 1; i++) {
+                if (!this.higherPriority(searchresults[i].getValue("custrecord_bb1_sca_a_priority")) && this.higherPriority(searchresults[i + 1].getValue("custrecord_bb1_sca_a_priority"))) {
+                  swap = searchresults[i];
+                  searchresults[i] = searchresults[i + 1];
+                  searchresults[i + 1] = swap;
+                  changed = true;
+                }
+              }
+            } while (changed);
+          }
+
+
+//convert to JSON
+          
+          var List = [];
+          var lasttype, newtype, lastpriority, newpriority, lasthomepriority, newhomepriority, imageleft = true;
+          for (var i in searchresults) {
+            res = searchresults[i];
+            newtype = res.getValue("custrecord_bb1_sca_a_type");
+            if (List.length > 0 && newtype != lasttype && !showonhomepage) { //Nesting views in backbone seems to be too much hassle, so just adding a endoftype check.
+              List.push({ type: lasttype, endoftype: true });
+            }
+            newpriority = res.getValue("custrecord_bb1_sca_a_priority");
+            if (newpriority != lastpriority) {
+              imageleft = true;
+            }
+            newhomepriority = newpriority;
+            if (newhomepriority > 5||newhomepriority==2) {
+              newhomepriority = 1;
+            }
+            newarticle = {
+              internalid: res.getId(),
+              name: res.getValue("name"),
+              type: newtype,
+              image: res.getText("custrecord_bb1_sca_a_image"),
+              url: res.getValue("custrecord_bb1_sca_a_url"),
+              priority: newpriority,
+              colour: res.getValue("custrecord_bb1_sca_a_colour"),
+              firsttype: !showonhomepage && newtype != lasttype,
+              firstpriority: (showonhomepage && newhomepriority != lasthomepriority) || (!showonhomepage && newpriority != lastpriority),
+              imageleft: imageleft
+            };
+            if (newarticle.firsttype) {
+              newarticle.onlyonetype = OnlyOneType; //There is only one type so make the list header simple.
+            }
+
+            if (showonhomepage) {
+              newarticle.homepageorder = res.getValue('custrecord_bb1_sca_a_homepageorder');
+              newarticle.homepagewidth = res.getValue('custrecord_bb1_sca_a_homepagewidth');
+              newarticle.buttontext = res.getValue('custrecord_bb1_sca_a_buttontext');
+              if (newpriority == 8 || newpriority == 7 || newpriority == 6) {
+                newarticle.content = res.getValue('custrecord_bb1_sca_a_content');
+              }
+            } else {
+              newarticle.order = res.getValue('custrecord_bb1_sca_a_order');
+              newarticle.pagewidth = res.getValue('custrecord_bb1_sca_a_pagewidth');
+            }
+
+            List.push(newarticle);
+
+            lasttype = newtype;
+            lastpriority = newpriority;
+            lasthomepriority = lastpriority;
+            if (lasthomepriority > 5) {
+              lasthomepriority = 1;
+            }
+            imageleft = !imageleft;
+          }
+          if (List.length > 0 && !showonhomepage && Type && Type.length > 1) { //Nesting views in backbone seems to be too much hassle, so just adding a endoftype check.
+            List.push({ type: lasttype, endoftype: true });
+          }
+          
+
+          //nlapiLogExecution("ERROR", "SCA Article Main", JSON.stringify(List));
+          return List;
+        } catch (err) {
+          nlapiLogExecution("ERROR", "SCA Article Main Error", err.toString());
+          return []
+        }
+      }
+    });
+  })

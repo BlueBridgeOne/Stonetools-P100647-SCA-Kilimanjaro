@@ -1,0 +1,118 @@
+{{! © 2017 NetSuite Inc. User may not copy, modify, distribute, or re-bundle or otherwise make available this code; provided, however, if you are an authorized user with a NetSuite account or log-in, you may use this code subject to the terms that govern your access and use. }}
+<div data-view="Global.BackToTop"></div>
+<div class="footer-strapline">
+	<div class="container">
+		<div class="col-lg-8 col-md-6 col-sm-6 col-xs-12">{{translate 'Talking to Stonetools is easy'}}</div>
+		<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 footer-strapline-small">
+			<table align="center">
+				<tr>
+					<td class="footer-strapline-icon"><i class="footer-strapline-phone-icon" /></td>
+					<td class="footer-strapline-small-text">{{translate 'You can call us
+						<br />+44 1892 519290'}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 footer-strapline-small">
+			<table align="center">
+				<tr>
+					<td class="footer-strapline-icon"><i class="footer-strapline-comment-icon" /></td>
+					<td class="footer-strapline-small-text">{{translate 'You can chat to us
+						<br />See below to start'}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="footer-content">
+	<div id="banner-footer" class="content-banner banner-footer" data-cms-area="global_banner_footer" data-cms-area-filters="global"></div>
+	{{#if showFooterNavigationLinks}}
+	<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+		<p class="footer-list-title">{{translate 'Shop Tools & Consumables'}}</p>
+		<ul class="footer-content-nav-list">
+			{{#each footerNavigationLinks}} {{#ifEquals list "Shop"}} {{#ifEquals language ../languageCode}}
+			<li>
+				<a {{objectToAtrributes item}}>{{translate text}}</a>
+			</li>
+			{{/ifEquals}} {{/ifEquals}} {{/each}}
+		</ul>
+		<p class="footer-list-title">{{translate 'Help'}}</p>
+		<ul class="footer-content-nav-list">
+			{{#each footerNavigationLinks}} {{#ifEquals list "Help"}} {{#ifEquals language ../languageCode}}
+			<li>
+				<a {{objectToAtrributes item}}>{{translate text}}</a>
+			</li>
+			{{/ifEquals}} {{/ifEquals}} {{/each}}
+		</ul>
+	</div>
+	<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+		<p class="footer-list-title">{{translate 'My Stonetools Account'}}</p>
+		<ul class="footer-content-nav-list">
+			{{#each footerNavigationLinks}} {{#ifEquals list "Account"}} {{#ifEquals language ../languageCode}}
+			<li>
+				<a {{objectToAtrributes item}}>{{translate text}}</a>
+			</li>
+			{{/ifEquals}} {{/ifEquals}} {{/each}}
+		</ul>
+		<p class="footer-list-title">{{translate 'Stonetools Values & Policies'}}</p>
+		<ul class="footer-content-nav-list">
+			{{#each footerNavigationLinks}} {{#ifEquals list "Values"}} {{#ifEquals language ../languageCode}}
+			<li>
+				<a {{objectToAtrributes item}}>{{translate text}}</a>
+			</li>
+			{{/ifEquals}} {{/ifEquals}} {{/each}}
+		</ul>
+	</div>
+	<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+		<p class="footer-list-title">{{translate 'Stonetools'}}</p>
+		<ul class="footer-content-nav-list">
+			{{#each footerNavigationLinks}} {{#ifEquals list "Stonetools"}} {{#ifEquals language ../languageCode}}
+			<li>
+				<a {{objectToAtrributes item}}>{{translate text}}</a>
+			</li>
+			{{/ifEquals}} {{/ifEquals}} {{/each}}
+		</ul>
+
+		<a href="https://www.facebook.com/StonetoolsUK"><i class="footer-facebook-icon"></i></a>
+		<a href="https://twitter.com/StonetoolsGroup"><i class="footer-twitter-icon"></i></a>
+		<a href="https://www.linkedin.com/company/stonetools-ltd/"><i class="footer-linkedin-icon"></i></a>
+	</div>
+	{{/if}}
+	<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+		<p class="footer-list-title">Company no. 6111732</p>
+		<p class="footer-address">Unit 8, Kingstanding Business Park
+			<br /> Kingstanding Way
+			<br /> Tunbridge Wells, Kent
+			<br /> TN2 3UP, United Kingdom
+			<br /> VAT GB668172703</p>
+	</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+	<div data-view="FooterContent"></div>
+</div>
+	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+
+	<a href="/schedule-a-call" class="button-schedule-call"><span class="footer-schedule-icon-size"><i class="footer-schedule-icon"></i></span> {{translate 'Schedule a Call'}}</a>
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 pull-right text-center">
+	<div class="footer-iso" />
+	<div class="footer-fed" />
+	</div>
+</div>
+<div class="footer-subcontent-line">
+<div class="footer-subcontent">
+		<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+			<div class="global-list">
+	{{#each availableHosts}}
+{{#unless @first}} | {{/unless}}
+<a href="{{url}}" data-navigation="ignore-click">{{title}}</a>
+						{{/each}}
+					</div>
+	</div>
+	<div class="col-lg-2 col-md-2 col-sm-4 col-xs-6 footer-subtext">
+		{{translate '&copy; Stonetools Ltd 2018'}}
+	</div>
+	<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 footer-subtext">
+		{{translate 'More ways to Shop: 0800 048 0408'}}
+	</div>
+	</div>
+	</div>
+{{!---- Use the following context variables when customizing this template: showFooterNavigationLinks (Boolean) footerNavigationLinks (Array) ----}}

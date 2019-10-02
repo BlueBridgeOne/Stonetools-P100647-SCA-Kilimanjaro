@@ -1,0 +1,223 @@
+/*
+	BB1 G Truslove - Aug 2018
+	NS Analytics Tracker
+*/
+
+function service(request) {
+	'use strict';
+	try {
+
+		var method = request.getMethod(),
+			data = request.getParameter('data');
+
+		nlapiLogExecution("AUDIT", "Analytics", data + " -- " + method);
+
+		var customer = nlapiGetWebContainer().getShoppingSession().getCustomer();
+
+		var guest_data = customer.getCustomFields();
+		var customer = nlapiGetUser();
+		var ctx = nlapiGetContext();
+		var contact, customer_ana = 0,
+			contact_ana = 0,
+			contact_rec, customer_rec;
+		try {
+			contact = ctx.getContact();
+		} catch (err) {}
+		//Try to us the contact if possible.
+		if (contact > 0) {
+			contact_ana = nlapiLookupField('contact', contact, 'custentity_bb1_scaa_custanalytics');
+			if (!contact_ana) {
+				entityid = nlapiLookupField('contact', contact, 'entityid');
+				contact_rec = nlapiCreateRecord("customrecord_bb1_scaa_custana");
+				contact_rec.setFieldValue("name", "Contact " + entityid);
+				contact_ana = nlapiSubmitRecord(contact_rec, false, true);
+				nlapiSubmitField('contact', contact, 'custentity_bb1_scaa_custanalytics', contact_ana);
+			}
+		}
+		//If no contact then use the customer.
+		if (contact_ana == 0 && customer > 0) {
+			var type = "customer",
+				entityid;
+			try {
+				customer_ana = nlapiLookupField(type, customer, 'custentity_bb1_scaa_custanalytics');
+			} catch (ce) {
+				type = "lead";
+				customer_ana = nlapiLookupField(type, customer, 'custentity_bb1_scaa_custanalytics');
+			}
+			if (!customer_ana) {
+				entityid = nlapiLookupField(type, customer, 'entityid');
+				customer_rec = nlapiCreateRecord("customrecord_bb1_scaa_custana");
+				customer_rec.setFieldValue("name", "Customer " + entityid);
+				customer_ana = nlapiSubmitRecord(customer_rec, false, true);
+				nlapiSubmitField(type, customer, 'custentity_bb1_scaa_custanalytics', customer_ana);
+			}
+		}
+
+
+		//nlapiLogExecution("AUDIT","guest_data",JSON.stringify(guest_data));
+		response.write("ok " + customer + " " + contact + " - " + customer_ana + " " + contact_ana);
+
+		if (contact_ana > 0) {
+			updateAnalytics(response, contact_ana, data);
+		} else if (customer_ana > 0) {
+			updateAnalytics(response, customer_ana, data);
+		}
+
+	} catch (e) {
+		nlapiLogExecution("ERROR", "SCA Article Service Error", e.toString());
+		response.write(e.toString());
+	}
+}
+//update an analytics record.
+function updateAnalytics(response, recid, data) {
+	var rec = nlapiLoadRecord("customrecord_bb1_scaa_custana", recid);
+
+	var prefix = "custrecord_bb1_scaa_custana_";
+
+	var year = now.getFullYear().toString();
+	var month = now.getMonth();
+	var track, value;
+
+	var totalvisits = parseInt(rec.getFieldValue(prefix + "totalvisits"));
+	if (!(totalvisits > 0)) {
+		totalvisits = 0;
+	}
+	var totalpages = parseInt(rec.getFieldValue(prefix + "totalpages"));
+	if (!(totalpages > 0)) {
+		totalpages = 0;
+	}
+
+	var lastmodifieddate = rec.getFieldValue(prefix + "lastmodifieddate");
+	var now = new DateTime();
+
+
+	var pagedata = rec.getFieldValue(prefix + "pagedata");
+	if (pagedata && pagedata.length > 0) {
+		pagedata = JSON.stringify(pagedata);
+	} else {
+		pagedata = {};
+	}
+	var visitdata = rec.getFieldValue(prefix + "visitdata");
+	if (visitdata && visitdata.length > 0) {
+		visitdata = JSON.stringify(visitdata);
+	} else {
+		visitdata = {};
+	}
+	var viewdata = rec.getFieldValue(prefix + "viewdata");
+	if (viewdata && viewdata.length > 0) {
+		viewdata = JSON.stringify(viewdata);
+	} else {
+		viewdata = {};
+	}
+	var catdata = rec.getFieldValue(prefix + "catdata");
+	if (catdata && catdata.length > 0) {
+		catdata = JSON.stringify(catdata);
+	} else {
+		catdata = {};
+	}
+	var artdata = rec.getFieldValue(prefix + "artdata");
+	if (artdata && artdata.length > 0) {
+		artdata = JSON.stringify(artdata);
+	} else {
+		artdata = {};
+	}
+	var itemdata = rec.getFieldValue(prefix + "itemdata");
+	if (itemdata && itemdata.length > 0) {
+		itemdata = JSON.stringify(itemdata);
+	} else {
+		itemdata = {};
+	}
+
+	rec.setFieldValue(prefix + "lastsite", data.site);
+	rec.setFieldValue(prefix + "lastos", data.OS);
+	rec.setFieldValue(prefix + "lastagent", data.userAgent);
+	rec.setFieldValue(prefix + "lastbrowser", data.browser);
+	rec.setFieldValue(prefix + "lastscreen", data.screensize);
+	rec.setFieldValue(prefix + "lastlanguage", data.language);
+
+	var pageschanged=false,visitschanged=false,catschanged=false,artschanged=false,itemschaanged=false;
+
+	var diff = now.getTime() - lastmodifieddate.getTime();
+	var hours = ((diff / 1000) / 60) / 60;
+	if (hours > 3) { //3 hours have passed so assume this is a new visit.
+
+		totalvisits++;
+		if (!visitdata[year]) {
+			visitdata[year] = [];
+		}
+		value = visitdata[year][month] || 0;
+		visitdata[year][month] = value + 1;
+		viewschanged=true;
+	}
+
+	for (var i = 0; i < data.tracking.length; i++) {
+		track = data.tracking[i];
+		switch (track.name) {
+			case "page":
+				totalpages++;
+				if (!pagedata[year]) {
+					pagedata[year] = [];
+				}
+				value = pagedata[year][month] || 0;
+				pagedata[year][month] = value + 1;
+
+				if (viewdata[track.value]) {
+					viewdata[track.value]++;
+				} else {
+					viewdata[track.value] = 1;
+				}
+				pageschanged=true;
+				break;
+			case "category":
+				if (catdata[track.value]) {
+					catdata[track.value]++;
+				} else {
+					catdata[track.value] = 1;
+				}
+				catschanged=true;
+				break;
+			case "article":
+				if (artdata[track.value]) {
+					artdata[track.value]++;
+				} else {
+					artdata[track.value] = 1;
+				}
+				artschanged=true;
+				break;
+			case "item":
+				if (itemdata[track.value]) {
+					itemdata[track.value]++;
+				} else {
+					itemdata[track.value] = 1;
+				}
+				itemschanged=true;
+				break;
+			case "transaction":
+				break;
+			case "search":
+				break;
+			default:
+				break;
+		}
+	}
+
+	rec.setFieldValue(prefix + "totalpages", totalpages);
+	if(pageschanged){
+	rec.setFieldValue(prefix + "pagedata", pagedata);
+	rec.setFieldValue(prefix + "viewdata", viewdata);
+	}
+	if(visitschanged){
+		rec.setFieldValue(prefix + "totalvisits", totalpages);
+	rec.setFieldValue(prefix + "visitdata", visitdata);
+	}
+	if(catschanged){
+	rec.setFieldValue(prefix + "catdata", catdata);
+	}
+	if(artschanged){
+	rec.setFieldValue(prefix + "artdata", artdata);
+	}
+	if(itemschanged){
+	rec.setFieldValue(prefix + "itemdata", itemdata);
+	}
+	nlapiSubmitRecord(rec);
+}

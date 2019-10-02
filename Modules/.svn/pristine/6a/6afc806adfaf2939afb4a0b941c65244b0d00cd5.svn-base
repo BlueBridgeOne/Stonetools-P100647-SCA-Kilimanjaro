@@ -1,0 +1,29 @@
+{
+  "gulp":
+  {
+    "sass": [
+      "Sass/**/*.scss"
+    ],
+    "ssp-libraries": [
+      "SuiteScript/*.js"
+    ],
+    "javascript": [
+      "JavaScript/*.js"
+    ],
+    "templates": [
+      "Templates/*"
+    ],
+        "ssp-files": {
+            "SuiteScript/my_account.ssp": "my_account.ssp",
+            "Internal/index-local.ssp": "my_account-local.ssp"
+        }
+  },
+  "overrides":
+  {
+    "suitecommerce/MyAccountApplication@3.2.0/Sass/_myaccount-layout.scss": "Sass/_myaccount-layout.scss",
+    "suitecommerce/MyAccountApplication@3.2.0/Templates/myaccount_layout.tpl": "Templates/myaccount_layout.tpl",
+    "suitecommerce/MyAccountApplication@3.2.0/SuiteScript/my_account.ssp": "SuiteScript/my_account.ssp",
+    "suitecommerce/MyAccountApplication@3.2.0/Internal/index-local.ssp": "Internal/index-local.ssp"
+  }
+
+}

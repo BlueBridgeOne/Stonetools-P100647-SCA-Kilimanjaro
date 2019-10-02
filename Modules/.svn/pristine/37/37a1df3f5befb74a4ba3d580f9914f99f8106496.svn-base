@@ -1,0 +1,10 @@
+{{!BB1 G Truslove 2017}}
+{{#if endoftype}}
+<div class="sidebar-line"></div>
+{{/if}}
+{{#unless endoftype}}
+{{#if firsttype}}
+<button class="accordion-grey accordionactive">{{translate typetext}}<i class="accordion-icon"></i></button>
+{{/if}}
+<div class="sidebar-li"><a class="sidebar-link" href="{{href}}" data-navigation="{{nav}}">{{name}}</a></div>
+{{/unless}}

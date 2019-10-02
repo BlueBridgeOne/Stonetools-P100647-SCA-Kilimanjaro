@@ -1,0 +1,27 @@
+{
+  "gulp":
+  {
+    "sass": [
+      "Sass/**/*.scss"
+    ]
+  },
+  "overrides":
+  {
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/base/_base.scss": "Sass/base/_base.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/base/_reset.scss": "Sass/base/_reset.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/base/_spacing.scss": "Sass/base/_spacing.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_typography.scss": "Sass/atoms/_typography.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_icons.scss": "Sass/atoms/_icons.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_breadcrumb.scss": "Sass/atoms/_breadcrumb.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_buttons.scss": "Sass/atoms/_buttons.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_stepped-process.scss": "Sass/atoms/_stepped-process.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/variables/_colors.scss": "Sass/variables/_colors.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/variables/_typography.scss": "Sass/variables/_typography.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/atoms/_forms.scss": "Sass/atoms/_forms.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/molecules/_accordions.scss": "Sass/molecules/_accordions.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/molecules/_item-cells.scss": "Sass/molecules/_item-cells.scss",
+    "suitecommerce/BaseSassStyles@3.0.0/Sass/molecules/_image-gallery.scss": "Sass/molecules/_image-gallery.scss",
+    "third_parties/twitter-bootstrap-sass@3.3.1/assets/stylesheets/bootstrap/_variables.scss": "Sass/atoms/_bootstrapvariables.scss"
+  }
+
+}

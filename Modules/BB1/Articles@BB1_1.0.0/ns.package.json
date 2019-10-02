@@ -1,0 +1,26 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*.js"
+        ],
+        "images": [
+            "Images/*"
+        ],
+        "ssp-libraries": [
+            "SuiteScript/*.js"
+        ],
+        "services": [
+            "SuiteScript/*.Service.ss"
+        ],
+        "templates": [
+            "Templates/*.tpl"
+        ],
+        "sass": [
+            "Sass/*.scss"
+        ]
+    },"overrides":
+  {
+    "suitecommerce/ItemRelations@3.0.2/Templates/item_relations_related_item.tpl": "Templates/item_relations_related_item.tpl",
+    "suitecommerce/ItemRelations@3.0.2/JavaScript/ItemRelations.RelatedItem.View.js": "JavaScript/ItemRelations.RelatedItem.View.js"
+  }
+}

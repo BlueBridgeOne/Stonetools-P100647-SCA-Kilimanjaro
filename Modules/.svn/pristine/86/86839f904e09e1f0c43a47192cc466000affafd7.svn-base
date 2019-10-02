@@ -1,0 +1,20 @@
+{{!BB1 G Truslove 2017 Article Sidebar}}
+{{#if relatedcontent}}
+	<div class="sidebar-content article-content">
+		{{{relatedcontent}}}
+	</div>
+	{{/if}} 
+
+<div class="sidebar">
+<div class="sidebar-ul">
+	{{#each collection}} {{#if endoftype}}
+</div>
+	<div class="sidebar-line"></div>
+	{{/if}} {{#unless endoftype}} {{#if firsttype}}
+	<button data-type="{{type}}" class="accordion-grey {{#unless startclosed}}accordionactive{{/unless}}">{{translate typetext}}<i class="accordion-icon"></i></button>
+	<div class="sidebar-ul"{{#if startclosed}} style="display:none" {{/if}}>
+	{{/if}}
+	<div class="sidebar-li" ><a class="sidebar-link" href="{{href}}" data-navigation="{{nav}}">{{name}}</a></div>
+	{{/unless}} {{/each}}
+</div>
+</div>

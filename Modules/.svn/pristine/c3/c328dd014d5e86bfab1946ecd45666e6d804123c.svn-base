@@ -1,0 +1,24 @@
+define('ContactUsTest.ServiceController'
+, [
+    'ServiceController'
+  , 'Application'
+  , 'ContactUsTest.Model'
+  ]
+, function
+  (
+    ServiceController
+  , Application
+  , ContactUsTestModel
+  )
+{
+  'use strict';
+
+  return ServiceController.extend({
+    name: 'ContactUsTest.ServiceController'
+
+  , post: function()
+    {
+      this.sendContent(ContactUsTestModel.create(this.data));
+    }
+  });
+});

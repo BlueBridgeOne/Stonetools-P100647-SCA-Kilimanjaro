@@ -1,0 +1,179 @@
+<small class="contactus-required">{{translate 'Required'}}*</small>
+
+<form class="contactus-limited-company-form">
+
+
+
+
+    <fieldset>
+        <legend>Registered Company Information</legend>
+        <div class="contactus-company" data-input="company" data-validation="control-group">
+            <label for="company">
+                {{translate 'Company Name'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <span data-validation="control">
+                <input name="company" type="text" id="company" maxlength="50">
+            </span>
+        </div>
+
+        <div class="contactus-tradingname" data-input="tradingname" data-validation="control-group">
+            <label for="tradingname">{{translate 'Trading Name'}}</label>
+            <span data-validation="control">
+                <input name="tradingname" type="text" id="tradingname" maxlength="50">
+            </span>
+        </div>
+    </fieldset>
+
+
+
+
+    <fieldset>
+        <legend>Registered Address</legend>
+
+        <div class="contactus-address" data-input="addr1" data-validation="control-group">
+            <label class="address-edit-fields-group-label" for="addr1">
+                {{translate 'Address Line 1'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <div class="address-edit-fields-group-form-controls" data-validation="control">
+                <input type="text" class="address-edit-fields-group-input" id="addr1" name="addr1" value="{{addressLine1}}">
+            </div>
+        </div>
+
+ 
+        <div class="contactus-address2" data-input="addr2">
+            <label class="address-edit-fields-addr2-optional-label" for="addr2">
+                {{translate 'Address Line 2'}}
+            </label>
+            <div>
+                <input type="text" class="address-edit-fields-group-input" id="addr2" name="addr2" value="{{addressLine2}}">
+            </div>
+        </div>
+
+        <div class="contactus-city" data-input="city" data-validation="control-group">
+            <label class="address-edit-fields-group-label" for="city">
+                {{translate 'City'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <div class="address-edit-fields-group-form-controls" data-validation="control">
+                <input type="text" class="address-edit-fields-group-input" id="city" name="city" value="{{city}}">
+            </div>
+        </div>
+
+        <div class="contactus-state" data-input="state" data-view="StatesView">
+        </div>
+
+        <div class="contactus-zip" data-input="zip" data-validation="control-group">
+            <label class="address-edit-fields-group-label" for="zip">
+                {{translate 'Zip Code'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <div class="address-edit-fields-group-form-controls" data-validation="control">
+                <input type="text" class="address-edit-fields-group-input-zip" id="zip" name="zip" value="{{zip}}" data-type="zip">
+            </div>
+        </div>
+
+        <div class="contactus-country" data-view="CountriesDropdown" data-input="country" data-validation="control-group">
+        </div>
+
+        <div class="contactus-registrationnumber" data-input="registrationnumber" data-validation="control-group">
+            <label for="registrationnumber">{{translate 'Company Registration Number'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <span data-validation="control">
+                <input name="registrationnumber" type="text" id="registrationnumber" maxlength="30">
+            </span>
+        </div>
+
+        <div class="contactus-vatnumber" data-input="vatnumber" data-validation="control-group">
+            <label for="vatnumber">{{translate 'VAT Number'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <span data-validation="control">
+                <input name="vatnumber" type="text" id="vatnumber" maxlength="30">
+            </span>
+        </div>
+
+        <div class="contactus-phone" data-input="phone" data-validation="control-group">
+            <label for="phone">{{translate 'Telephone Number'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <span data-validation="control">
+                <input name="phone" type="text" id="phone" maxlength="100">
+            </span>
+        </div>
+
+        <div class="contactus-generalemailaddress" data-input="generalemailaddress" data-validation="control-group">
+            <label for="generalemailaddress">{{translate 'General Email Address'}}
+                <small class="contactus-required">&nbsp;*</small>
+            </label>
+            <span data-validation="control">
+                <input name="generalemailaddress" type="text" id="generalemailaddress" maxlength="100">
+            </span>
+        </div>
+
+        <div class="contactus-companywebsite" data-input="companywebsite" data-validation="control-group">
+            <label for="companywebsite">{{translate 'Company Website'}}
+            </label>
+            <div>
+                <input name="companywebsite" type="text" id="companywebsite" maxlength="100">
+            </div>
+        </div>
+    </fieldset>
+
+
+
+
+
+
+    <p>
+        DATA PROTECTION ACT: We require your consent to request the trade references you have given us. 
+        By submitting this application form you are providing permission for Stonetools Ltd to approach the 
+        trade references supplied for information regarding the credit account you hold.
+    </p>
+
+
+
+
+
+
+    <div class="article-content">
+        <p>
+            If approved, this application will create a contract between your company and Stonetools Ltd. Please carefully read
+            the terms and conditions below.
+        </p>
+        <ul>
+            <li>
+                <a href="/support/legal/credit-account-agreement">Credit Account Agreement</a>
+            </li>
+            <li>
+                <a href="/support/legal/terms-and-conditions">Terms and Conditions</a>
+            </li>
+            <li>
+                <a href="/support/legal/web-terms-and-conditions">Web Terms and Conditions</a>
+            </li>
+            <li>
+                <a href="/explore/stonetools-policies/privacy-policy">Privacy Policy</a>
+            </li>
+        </ul>
+        <p>
+            We want you to know exactly how our service works and why we need the details requested above.
+        </p>
+        <p>
+            I have read and accept Stonetools Ltd Credit Account Agreement, General Terms and Conditions, Web Terms and Conditions and Privacy Policy.
+        </p>
+    </div>
+
+    <input id="iagree" name="iagree" type="checkbox" value="IAgree" /> {{translate 'I Agree'}}
+    <small class="input-required">*</small>
+
+
+
+
+
+    <div class="contactus-button-container">
+        <button class="contactus-button-submit" type="submit">{{translate 'Send Account Application Form to Stonetools'}}</button>
+    </div>
+
+</form>

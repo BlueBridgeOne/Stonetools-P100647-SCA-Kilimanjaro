@@ -1,0 +1,36 @@
+Stonetools Kilimanjaro Release.
+
+2018 BB1 - G Truslove
+
+There is a staging version of the site located under: Stonetools Ltd_4554490
+There is only one web setup record. Staging site uses different touchpoints attached to the domains.
+
+Staging urls:
+
+stonetools-uk.bluebridgeone.com
+stonetools-ie.bluebridgeone.com
+stonetools-fr.bluebridgeone.com
+stonetools-global.bluebridgeone.com
+
+Live urls:
+
+www.stonetools.co.uk
+www.stonetools.ie
+www.stonetools.fr
+www.stonetoolsglobal.com
+
+This site has a few large customisations.
+
+1. Most of the pages, static content, and home page consist of 'Articles' these are like blog/news articles and have multiple types and features. There are also numerous article list pages e.g. support or reference, these are just lists of articles. The home page is just a list of articles. 
+
+2. Product options. Product options are show as tables so that multiple products can be added at once. The downside of this is that wish/tool lists and quotes and to be customised to cope with multiple additions.
+
+3. Tool lists. Loads of little wishlist alterations. Including, mail me and download CSV.
+
+4. Site specific content. Categories, items, languages, articles, currencies. All these are site specific and use various website selectors for UK, IE, FR & Global.
+
+5. Shop window. A one page view of all categories.
+
+6. Sidebar. Articles have a side bar which shows things like related articles and a search.
+
+7. Stock. There is custom stock notes throughout the site which give information on next delivery date, lead time etc.

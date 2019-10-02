@@ -1,0 +1,11 @@
+{
+	"type": "object"
+,	"subtab": {
+        "id": "home",
+        "title": "Home",
+        "description": "Home",
+        "group": "layout"
+    }
+,	"properties": {
+	}
+}

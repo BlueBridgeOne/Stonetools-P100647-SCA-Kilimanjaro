@@ -1,0 +1,13 @@
+/*BB1 G Truslove 2017*/
+define('Articles.Collection',
+  [
+  'Backbone',
+  'Article.Model'
+  ],
+  function (Backbone, Model) {
+    return Backbone.Collection.extend({
+      model: Model,
+      url: _.getAbsoluteUrl('services/Article.Service.ss')
+    });
+  }
+);

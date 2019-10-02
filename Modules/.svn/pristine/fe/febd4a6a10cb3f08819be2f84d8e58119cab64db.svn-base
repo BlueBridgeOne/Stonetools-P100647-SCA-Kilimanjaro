@@ -1,0 +1,56 @@
+/*
+	© 2017 NetSuite Inc.
+	User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+	provided, however, if you are an authorized user with a NetSuite account or log-in, you
+	may use this code subject to the terms that govern your access and use.
+*/
+
+$sc-main-header: 82px;
+$sc-main-mobile-header: 82px;
+
+$sc-login-main-header: 140px;
+$sc-login-mid-main-header: 85px;
+$sc-login-main-mobile-header: 40px;
+
+.checkout-layout {
+	@extend %sc-layout;
+	padding-top:$sc-main-mobile-header;
+}
+
+.login-register-body{
+@extend .container;
+margin-left:auto;
+margin-right:auto;
+margin-top:$sc-login-main-mobile-header;
+	@media (min-width: $screen-md-min){
+		margin-top:$sc-login-main-header;
+	}
+	@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max){
+		margin-top:$sc-login-mid-main-header;
+	}
+}
+
+.checkout-layout-header {
+	margin-bottom: $sc-margin-lv4;
+	position:fixed;
+	top:0;
+z-index:1000;
+	@media (min-width: $screen-sm-min){
+		margin-bottom: $sc-margin-lv8;
+	}
+}
+
+.checkout-layout-content{
+	@extend .container;
+}
+
+.checkout-layout-footer {
+	@extend %sc-footer !optional;
+}
+
+.checkout-layout-breadcrumb{}
+
+.checkout-layout-no-javascript-msg {
+	@extend .message-warning;
+	width: 100%;
+}

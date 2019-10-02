@@ -1,0 +1,34 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*.js"
+        ],
+        "images": [
+            "Images/*"
+        ],
+        "ssp-libraries": [
+            "SuiteScript/*.js"
+        ],
+        "services": [
+            "SuiteScript/*.Service.ss"
+        ],
+        "templates": [
+            "Templates/*.tpl"
+        ],
+        "sass": [
+            "Sass/*.scss"
+        ]
+    },
+  "overrides":
+  {
+       "suitecommerce/Cart@4.3.0/JavaScript/Cart.Confirmation.Helpers.js": "JavaScript/Cart.Confirmation.Helpers.js",
+       "suitecommerce/Cart@4.3.0/JavaScript/Cart.Confirmation.View.js": "JavaScript/Cart.Confirmation.View.js",
+       "suitecommerce/Cart@4.3.0/Templates/cart_confirmation_modal.tpl": "Templates/cart_confirmation_modal.tpl",
+       "suitecommerce/ProductList@3.0.3/Templates/product_list_control.tpl": "Templates/product_list_control.tpl",
+       "suitecommerce/ProductList@3.0.3/JavaScript/ProductList.Control.View.js": "JavaScript/ProductList.Control.View.js",
+       "suitecommerce/ProductList@3.0.3/Sass/_product-list-control.scss": "Sass/_product-list-control.scss"
+       ,
+       "suitecommerce/ProductDetailToQuote@2.0.1/Sass/_product-detail-to-quote.scss": "Sass/_product-detail-to-quote.scss",
+       "suitecommerce/ProductDetailToQuote@2.0.1/JavaScript/ProductDetailToQuote.View.js": "JavaScript/ProductDetailToQuote.View.js"
+  }
+}

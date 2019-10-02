@@ -1,0 +1,60 @@
+/*BB1 G Truslove 2017*/
+define('Articles.List.View', [
+	'Backbone', 'articles_list.tpl', 'Backbone.CollectionView', 'Backbone.CompositeView', 'Articles.Details.View', 'Sidebar.List.View', 'Article'
+], function(Backbone, articles_list_tpl, CollectionView, CompositeView, ArticlesDetailsView, SidebarView, Article) {
+	return Backbone.View.extend({
+		initialize: function(options) {
+			CompositeView.add(this);
+			this.application = options.application;
+			this.collection = options.collection;
+			this.type = options.type;
+			this.sidebarTypes = options.sidebarTypes;
+
+		},
+		getTitle: function() {
+		console.log(this.type);
+			return SC.Tools.getTitle(Article.getTypeText(this.type));
+		},
+		getCanonical: function() {
+			return Article.getHref(this.type);
+		},
+		getMetaDescription: function() {
+			return SC.Utils.translate(Article.getFullTypeText(this.type));
+		},
+		getAddToHead: function() {
+			return SC.Tools.getSEO({ title: Article.getFullTypeText(this.type), summary: this.getMetaDescription() });
+		},
+		getBreadcrumbPages: function getBreadcrumbPages ()
+  {
+  var breadcrumbs=[];
+  
+  breadcrumbs.push({href:"/"+Article.getMainTypeUrl(this.type),text:Article.getMainText(this.type)});
+  if(Article.getTypeUrl(this.type)){
+  breadcrumbs.push({href:Article.getHref(this.type),text:Article.getTypeText(this.type)});
+  }
+  				return breadcrumbs;
+  },
+		childViews: {
+			'Articles.Collection': function() {
+				//console.log("Main: "+JSON.stringify(this.collection));
+				return new CollectionView({
+					'childView': ArticlesDetailsView,
+					'collection': this.collection,
+					'type': this.type
+				});
+			},
+			'Sidebar': function() {
+				if (Article.showSidebar(this.type)) {
+					return new SidebarView({ 'application': this.application,'types':this.sidebarTypes });
+				} else {
+					return null;
+				}
+			}
+		},
+		template: articles_list_tpl,
+		getContext: function() {
+			return { type: this.type, bannertext: Article.getBannerText(this.type),
+			showSidebar:Article.showSidebar(this.type) }
+		}
+	});
+});

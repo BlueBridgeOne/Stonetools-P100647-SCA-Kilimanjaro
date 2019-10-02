@@ -1,0 +1,135 @@
+/* BB1 G Truslove 2017 */
+
+.sidebar {
+	background-color: $sc-color-theme-background;
+	width: 100%;
+	margin-bottom: $sc-margin-lv5;
+	border-bottom: 1px solid $sc-color-theme-border;
+}
+
+.sidebar-title {
+	color: #7e7e7e;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-weight: normal;
+	padding: $sc-padding-lv3 $sc-padding-lv3;
+}
+
+.sidebar-link {
+	color: #5a5a5a;
+	padding: $sc-padding-lv1 20px;
+	display: block;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.sidebar-link:active {
+	font-weight: 700;
+}
+
+.sidebar-link-viewall {
+	color: $st-color-green;
+	margin-top: 15px;
+}
+
+.sidebar-viewall-icon {
+	@extend .fa;
+	@extend %fa-chevron-right;
+}
+
+.sidebar-viewless-icon {
+	@extend .fa;
+	@extend %fa-chevron-left;
+}
+
+.sidebar-link:hover {
+	color: #00db8d!important;
+}
+
+.sidebar-line {
+	margin: 0 0 0 0;
+}
+
+.sidebar-ul {
+	padding-bottom: 15px;
+	padding-top: 15px;
+}
+
+.sidebar-content {
+	padding: $sc-padding-lv2 $sc-padding-lv2;
+	margin-bottom: 30px;
+}
+
+.sidebar-search-box {
+	margin-left: 20px;
+	margin-right: 20px;
+	padding: 4px 12px;
+	border: 1px solid $sc-color-theme-border;
+	background-color: $st-color-white;
+}
+.sidebar-keyword-box {
+	margin-left: 20px;
+	margin-right: 20px;
+	
+}
+
+.sidebar-search-input {
+	@extend .input-large;
+	min-width: auto!important;
+	width: 100%;
+	margin: 0!important;
+	border-style: none!important;
+	outline: 0!important;
+}
+
+.sidebar-search-ul {
+	padding-top: 7px!important;
+	padding-bottom: 20px!important;
+}
+
+.sidebar-search-icon {
+	@extend .fa;
+	@extend %fa-search;
+	color: $st-color-lightgrey;
+	font-size: $sc-font-size-xxxl;
+	line-height: 38px;
+}
+
+.list-inline {
+	display: flex;
+	align-items: stretch;
+	/* Default */
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.list-inline li {
+	display: block;
+	flex: 0 1 auto;
+	/* Default */
+}
+
+.sidebar-keyword{
+	
+	background-color: $st-color-box;
+	color: $st-color-grey;
+	-webkit-border-radius: 50%;
+	border-radius: 5px;
+	padding:3px 6px;
+	margin-right:10px;
+	margin-bottom:10px;
+	display:inline-block;
+	font-size: $sc-font-size-xs;
+
+	&:hover {
+		background-color: $st-color-green;
+		color: $st-color-white;
+	}
+
+	&-active {
+		background-color: $st-color-green;
+		color: $st-color-white;
+	}
+}

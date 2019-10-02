@@ -1,0 +1,39 @@
+define('RegisterB2B.Router', [
+  'Backbone',
+  'RegisterB2B.View',
+  'RegisterB2B.ThankYou.View'
+], function (
+  Backbone,
+  RegisterB2BView,
+  RegisterB2BThankYouView
+) {
+  'use strict';
+
+  return Backbone.Router.extend({
+    routes: {
+      'credit-account-application2/thank-you': 'RegisterB2BThankYou',
+      'credit-account-application2': 'RegisterB2B'
+    },
+
+    initialize: function (application) {
+      this.application = application;
+    },
+
+    RegisterB2BThankYou: function (options) {
+      var view = new RegisterB2BThankYouView({
+        application: this.application
+      });
+
+      view.showContent();
+    },
+    
+    RegisterB2B: function (options) {
+      var view = new RegisterB2BView({
+        application: this.application,
+      });
+
+      view.showContent();
+    }
+
+  });
+});

@@ -1,0 +1,92 @@
+/*===========================================
+
+  BB1 - G Truslove
+
+  Date: Jun 2018
+
+  ===========================================*/
+
+.newsletter-container {
+  @extend .container;
+  overflow:hidden;
+
+  .icon-generic {
+    @extend .fa;
+    @extend .fa-fw;
+    font-size: 1em;
+    color: $sc-color-theme-900
+  }
+
+  .icon-letter{
+    @extend .icon-generic;
+    @extend %fa-envelope-o;
+  }
+
+  .icon-stackoverflow{
+    @extend .icon-generic;
+    @extend %fa-stack-overflow;
+  }
+
+  .icon-chevroncircleright{
+    @extend .icon-generic;
+    @extend %fa-chevron-circle-right;
+  }
+
+}
+
+.newsletter-form {
+  margin: $sc-margin-lv3 auto;
+  width:100%;
+  text-align:left;
+  input[type="text"]{width:100%;}
+  button{width:100%;}
+
+  fieldset{
+    width: 100%;
+  }
+}
+
+.newsletter-entry-form{
+text-align:center;
+}
+
+.entry-form-title{
+margin-bottom: $sc-margin-lv3;
+
+  @media (min-width: $screen-md-min) {
+    margin-bottom: $sc-margin-lv6;
+  }
+}
+
+.newsletter-firstname,
+.newsletter-lastname,
+.newsletter-company,
+.newsletter-email{
+  @extend .row;
+
+
+  input {
+    @extend .input-large;
+  }
+}
+
+.newsletter-required {
+  @extend .input-required;
+  text-align:right;
+}
+
+.newsletter-button-container {
+  @extend .row;
+  margin-top: $sc-margin-lv4;
+  text-align: center;
+}
+
+.newsletter-button-submit {
+  @extend .button-primary;
+  @extend .button-large;
+  width: 50%;
+  margin: 0px auto;
+  @media (max-width: $screen-xs-max) {
+    width: 100%;
+  }
+}

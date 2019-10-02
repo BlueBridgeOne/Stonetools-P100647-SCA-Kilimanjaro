@@ -1,0 +1,60 @@
+/*
+	BB1 G Truslove - Aug 2018
+	NS Analytics Tracker
+*/
+
+function service (request)
+{
+	'use strict';
+	try
+	{
+		
+			var method = request.getMethod()
+			,	data = request.getParameter('data');
+
+nlapiLogExecution("AUDIT","Analytics",data+" -- "+method);
+
+var customer=nlapiGetWebContainer().getShoppingSession().getCustomer();
+
+var guest_data = customer.getCustomFields();
+var customer=nlapiGetUser();
+var ctx=nlapiGetContext();
+var contact,customer_ana,contact_ana,contact_rec,customer_rec;
+try{
+	contact=ctx.getContact();
+}catch(err){}
+
+if(customer>0){
+	var type="customer";
+	try{
+	customer_ana = nlapiLookupField(type, customer, 'custentity_bb1_scaa_custanalytics');
+	}catch(ce){
+		type="lead";
+		customer_ana = nlapiLookupField(type, customer, 'custentity_bb1_scaa_custanalytics');
+	}
+	if(!customer_ana){
+customer_rec=nlapiCreateRecord("customrecord_bb1_scaa_custana");
+customer_rec.setFieldValue("name","Customer Test");
+customer_ana=nlapiSubmitRecord(customer,false,true);
+nlapiSubmitField(type, customer, 'custentity_bb1_scaa_custanalytics', customer_ana);
+	}
+}
+if(contact>0){
+	contact_ana = nlapiLookupField('contact', contact, 'custentity_bb1_scaa_custanalytics');
+	if(!contact_ana){
+contact_rec=nlapiCreateRecord("customrecord_bb1_scaa_custana");
+contact_rec.setFieldValue("name","Contact Test");
+contact_ana=nlapiSubmitRecord(customer,false,true);
+nlapiSubmitField('contact', contact, 'custentity_bb1_scaa_custanalytics', contact_ana);
+	}
+}
+
+//nlapiLogExecution("AUDIT","guest_data",JSON.stringify(guest_data));
+		response.write("ok "+customer+" "+contact+" - "+customer_ana+" "+contact_ana);
+	}
+	catch (e)
+	{
+		nlapiLogExecution("ERROR", "SCA Article Service Error", e.toString());
+		response.write(e.toString());
+	}
+}

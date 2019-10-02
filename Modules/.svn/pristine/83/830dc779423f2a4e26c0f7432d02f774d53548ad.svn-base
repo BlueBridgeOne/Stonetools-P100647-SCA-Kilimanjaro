@@ -1,0 +1,58 @@
+{{!BB1 G Truslove 2017 - Article}}
+<style>
+	hr,.cell-number{background-color:{{colour}};}
+</style>
+<div class="cms-landing-page cms-content">
+	<div class="cms-body">
+		<div data-cms-area="knowledgebase-list" data-cms-area-filters="path"></div>
+		<div class="row">
+			{{#if showSidebar}}
+			<div class="col-md-3 hidden-sm">
+				<div data-view="Sidebar"></div>
+			</div>
+			<div class="col-md-9 col-sm-12">
+				{{else}}
+<div class="col-xs-12">
+				{{/if}}
+				<table class="articles-banner-table" style="background-color:{{colour}}">
+					<tr>
+						{{#if image}}
+						<td class="articles-banner-image-td" style="background-image:url('{{image}}');">
+							<img itemprop="image" src="{{image}}" style="display:none" />
+						</td>
+						{{/if}}
+						<td class="articles-banner-td">
+							<p class="articles-banner-type" itemprop="about">{{translate typetext}}</p>
+							<h2 class="articles-banner-title" itemprop="name">{{name}}</h2>
+						</td>
+					</tr>
+				</table>
+				<div data-view="SocialSharing.Flyout" class="product-details-full-social-sharing"></div>
+				<div class="article-content-container">
+				<div class="article-content" itemprop="articleBody">
+					{{{content}}}
+				</div>
+			</div>
+				{{#if hasrelatedarticles}}
+				<div class="article-related-container" style="border-top:2px solid {{colour}};">
+					<h3 class="article-related-title" style="color:{{colour}};">{{translate 'Related'}}</h3>
+					<div class="row">
+						{{#each relatedarticles}}
+						<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+							<div class="articles-padding articles-standard-break">
+								<a href="{{this.href}}" data-navigation="{{nav}}"><h5 class="articles-standard-title">{{this.name}}</h5></a>
+							</div>
+						</div>
+						{{/each}}
+					</div>
+				</div>
+				{{/if}} {{#if hasrelateditems}}
+				<div class="article-related-container" style="border-top:2px solid {{colour}};">
+					<h3 class="article-related-title" style="color:{{colour}};">{{translate 'Products You Might Need'}}</h3>
+					<div data-view="Related.Items" class="cart-detailed-related"></div>
+				</div>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</div>

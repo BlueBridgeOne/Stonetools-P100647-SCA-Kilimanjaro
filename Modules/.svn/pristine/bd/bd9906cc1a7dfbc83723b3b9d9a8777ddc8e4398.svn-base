@@ -1,0 +1,12 @@
+//@module Article - BB1 GTruslove Nov 2017 - Connect to article records. Data model for the sidebar.
+define('ArticleOverview.Model',
+  [
+  'Backbone',
+  'underscore'
+  ],
+  function (Backbone, _) {
+    return Backbone.CachedModel.extend({
+      urlRoot: _.getAbsoluteUrl('services/ArticleOverview.Service.ss')
+    });
+  }
+);

@@ -1,0 +1,86 @@
+<small class="contactus-required">{{translate 'Required'}}*</small>
+
+<form class="contactus-limited-company-form">
+
+
+
+
+    <fieldset>
+        <legend>Registered Company Information</legend>
+        <div class="contactus-company" data-input="company" data-validation="control-group">
+            <label for="company">{{translate 'Company Name'}}
+                <small class="contactus-required">*</small>
+            </label>
+            <span data-validation="control">
+                <input name="company" type="text" id="company" maxlength="50">
+            </span>
+        </div>
+
+        <div class="contactus-tradingname" data-input="tradingname" data-validation="control-group">
+            <label for="tradingname">{{translate 'Trading Name'}}</label>
+            <span data-validation="control">
+                <input name="tradingname" type="text" id="tradingname" maxlength="50">
+            </span>
+        </div>
+    </fieldset>
+
+
+
+
+
+
+
+
+
+
+
+    <p>
+        DATA PROTECTION ACT: We require your consent to request the trade references you have given us. 
+        By submitting this application form you are providing permission for Stonetools Ltd to approach the 
+        trade references supplied for information regarding the credit account you hold.
+    </p>
+
+
+
+
+
+
+    <div class="article-content">
+        <p>
+            If approved, this application will create a contract between your company and Stonetools Ltd. Please carefully read
+            the terms and conditions below.
+        </p>
+        <ul>
+            <li>
+                <a href="/support/legal/credit-account-agreement">Credit Account Agreement</a>
+            </li>
+            <li>
+                <a href="/support/legal/terms-and-conditions">Terms and Conditions</a>
+            </li>
+            <li>
+                <a href="/support/legal/web-terms-and-conditions">Web Terms and Conditions</a>
+            </li>
+            <li>
+                <a href="/explore/stonetools-policies/privacy-policy">Privacy Policy</a>
+            </li>
+        </ul>
+        <p>
+            We want you to know exactly how our service works and why we need the details requested above.
+        </p>
+        <p>
+            I have read and accept Stonetools Ltd Credit Account Agreement, General Terms and Conditions, Web Terms and Conditions and Privacy Policy.
+        </p>
+    </div>
+
+    <input id="iagree" name="iagree" type="checkbox" value="IAgree" /> {{translate 'I Agree'}}
+    <small class="input-required">*</small>
+
+
+
+
+
+    <div class="contactus-button-container">
+        <button class="contactus-button-submit" type="submit">{{translate 'Send Account Application Form to Stonetools'}}</button>
+    </div>
+
+</form>

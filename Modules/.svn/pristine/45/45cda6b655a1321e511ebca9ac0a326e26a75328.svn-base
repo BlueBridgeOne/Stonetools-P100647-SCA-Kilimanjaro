@@ -1,0 +1,382 @@
+define('RegisterB2B.Model', [
+  'Models.Init',
+  'SC.Model',
+  'Utils',
+  'Tools'
+], function (
+  CommerceAPI,
+  SCModel,
+  Utils,
+  Tools
+) {
+
+  'use strict';
+
+  return SCModel.extend({
+
+    name: 'RegisterB2B',
+
+    create: function (data) {
+
+      try {
+        nlapiLogExecution("DEBUG", "Deepak Testing - line 22", JSON.stringify(data));
+
+        this.validate(data);
+
+        var configuration, currentDomain, request, url;
+        var caseconfiguration;
+        var notify = /* configuration.notify */ 'deeps@mailinator.com';
+        var region = 1, regionText = "UK"; //CUSTOM REGION custentity_bb1_sales_region: 1 UK, 2 France, 3 Ireland
+        var contactID;
+        var leadID;
+        var newCaseRecord;
+        var caseID;
+        var reply;
+
+        configuration = SC.Configuration && SC.Configuration.contactUs;
+        caseconfiguration = SC.Configuration && SC.Configuration.cases;
+        currentDomain = data.host;
+        data.generalemailaddress = data.generalemailaddress.toLowerCase();
+
+        var params = [{
+          name: "Name",
+          value: data.firstname + " " + data.lastname
+        }, {
+          name: "Company",
+          value: data.company
+        }, {
+          name: "E-Mail",
+          value: data.generalemailaddress,
+          href: "mailto:" + data.generalemailaddress + "?subject=re: " + data.title
+        }, {
+          name: "Sales Region",
+          value: regionText
+        }, {
+          name: "Host",
+          value: data.host,
+          href: "https://" + data.host
+        }];
+
+        if (CommerceAPI.context.getFeature('SUBSIDIARIES')) {
+          data.subsidiary = CommerceAPI.session.getShopperSubsidiary();
+        }
+
+        if (data.phone) {
+          params.push({
+            name: "Phone Number",
+            value: data.phone,
+            href: "tel:" + data.phone
+          });
+        }
+
+        switch (data.host) {
+          case "stonetools-fr.bluebridgeone.com":
+          case "www.stonetools.fr":
+          case "stonetools.fr":
+            region = 2;
+            regionText = "France"
+          case "stonetools-ie.bluebridgeone.com":
+          case "www.stonetools.ie":
+          case "stonetools.ie":
+            region = 3;
+            regionText = "Ireland"
+        }
+
+        nlapiLogExecution("DEBUG", "Dee Test", JSON.stringify({
+          'configuration.usecompanies': configuration.usecompanies,
+          'data.company': data.company,
+          'data.company.length': data.company.length,
+        }));
+
+
+
+        if (configuration.usecompanies && data.company && data.company.length > 0) {
+
+          // nlapiLogExecution("DEBUG", "Deepak Testing - line 82", "USE COMPANIES?");
+
+          // //Company and contact
+          // var customerSearch = nlapiSearchRecord("entity", null, [
+          //   ["entityid", "is", data.company], 'OR', ["email", "is", data.generalemailaddress]
+          // ], [
+          //   new nlobjSearchColumn("entityid", null, null),
+          //   new nlobjSearchColumn("email", null, null)
+          // ]);
+
+          // for (var i = 0; customerSearch != null && i < customerSearch.length; i++) {
+          //   var res = customerSearch[i];
+          //   if (res.recordType != "contact") {
+          //     leadID = res.getId();
+          //     break;
+          //   }
+          // }
+
+
+
+
+
+          // if (!leadID) { 
+            
+          //   //Create new company
+          //   var lead = nlapiCreateRecord('lead');
+          //   lead.setFieldValue("email", data.generalemailaddress);
+          //   lead.setFieldValue("comments", "Created by website " + currentDomain + ".");
+          //   lead.setFieldValue("companyname", data.company);
+          //   if (data.phone) {
+          //     lead.setFieldValue("phone", data.phone);
+          //   }
+
+          //   //Address
+          //   if (data.addr1) {
+          //     var line = lead.getLineItemCount("addressbook") + 1;
+
+          //     lead.setLineItemValue("addressbook", "addressee", line, data.company);
+          //     lead.setLineItemValue("addressbook", "attention", line, data.firstname + " " + data.lastname);
+          //     lead.setLineItemValue("addressbook", "addr1", line, data.addr1);
+          //     lead.setLineItemValue("addressbook", "city", line, data.city);
+          //     lead.setLineItemValue("addressbook", "state", line, data.state);
+          //     lead.setLineItemValue("addressbook", "country", line, data.country);
+          //     lead.setLineItemValue("addressbook", "zip", line, data.zip);
+          //   }
+
+          //   //CUSTOM
+          //   lead.setFieldValue("custentity_bb1_other_name", data.company);
+          //   lead.setFieldValue("custentity_bb1_gen_email_add", data.generalemailaddress);
+          //   lead.setFieldValue("custentity_bb1_sales_region", region);
+
+
+          //   leadID = nlapiSubmitRecord(lead, true);
+          // }
+
+
+
+
+
+
+
+          // var contactSearch = nlapiSearchRecord("contact", null, [
+          //   ["company", "is", leadID], 'AND', ["email", "is", data.generalemailaddress]
+          // ], [
+          //   new nlobjSearchColumn("entityid", null, null),
+          //   new nlobjSearchColumn("email", null, null)
+          // ]);
+
+          // for (var i = 0; contactSearch != null && i < contactSearch.length; i++) {
+          //   var res = contactSearch[i];
+          //   contactID = res.getId();
+          //   break;
+          // }
+
+
+
+
+
+          // if (!contactID) { 
+            
+          //   //create a new contact
+          //   var contact = nlapiCreateRecord('contact');
+          //   contact.setFieldValue("email", data.generalemailaddress);
+          //   contact.setFieldValue("firstname", data.firstname);
+          //   contact.setFieldValue("lastname", data.lastname);
+          //   contact.setFieldValue("company", leadID);
+          //   contact.setFieldValue("comments", "Created by website " + currentDomain + ".");
+          //   if (data.phone) {
+          //     contact.setFieldValue("phone", data.phone);
+          //   }
+          //   //Address
+          //   if (data.addr1) {
+          //     var line = contact.getLineItemCount("addressbook") + 1;
+
+          //     contact.setLineItemValue("addressbook", "addressee", line, data.company);
+          //     contact.setLineItemValue("addressbook", "attention", line, data.firstname + " " + data.lastname);
+          //     contact.setLineItemValue("addressbook", "addr1", line, data.addr1);
+          //     contact.setLineItemValue("addressbook", "city", line, data.city);
+          //     contact.setLineItemValue("addressbook", "state", line, data.state);
+          //     contact.setLineItemValue("addressbook", "country", line, data.country);
+          //     contact.setLineItemValue("addressbook", "zip", line, data.zip);
+          //   }
+          //   contactID = nlapiSubmitRecord(contact, true);
+          // }
+
+
+
+
+
+        } else {
+
+
+
+
+
+
+          // nlapiLogExecution("DEBUG", "Deepak Testing - line 169", "ELSE INDIVIDUAL");
+
+          // //Individual
+          // var customerSearch = nlapiSearchRecord("entity", null, [
+          //   ["email", "is", data.generalemailaddress]
+          // ], [
+          //   new nlobjSearchColumn("entityid", null, null),
+          //   new nlobjSearchColumn("email", null, null)
+          // ]);
+
+          // for (var i = 0; customerSearch != null && i < customerSearch.length; i++) {
+          //   var res = customerSearch[i];
+          //   if (res.recordType != "contact") {
+          //     leadID = res.getId();
+          //     break;
+          //   }
+          // }
+
+
+
+
+          // if (!leadID) { 
+
+
+          //   //Create new lead
+          //   //nlapiLogExecution('DEBUG', "Not found " + data.generalemailaddress);
+
+          //   nlapiLogExecution("DEBUG", "Deepak Testing - line 190", "CREATE A NEW LEAD");
+
+          //   var lead = nlapiCreateRecord('lead');
+          //   lead.setFieldValue("email", data.generalemailaddress);
+          //   lead.setFieldValue("firstname", data.firstname);
+          //   lead.setFieldValue("lastname", data.lastname);
+          //   lead.setFieldValue("comments", "Created by website " + currentDomain + ".");
+          //   lead.setFieldValue("isperson", "T");
+          //   if (data.phone) {
+          //     lead.setFieldValue("phone", data.phone);
+          //   }
+          //   if (data.company) {
+          //     lead.setFieldValue("companyname", data.company);
+          //   } else {
+          //     lead.setFieldValue("companyname", "unknown");
+          //   }
+
+
+
+
+
+          //   //CUSTOM
+          //   lead.setFieldValue("custentity_bb1_gen_email_add", data.generalemailaddress);
+          //   lead.setFieldValue("custentity_bb1_sales_region", region);
+
+
+          //   var autonumbering = false; //Customer autonumbering is on in account.
+
+          //   if (autonumbering) {
+          //     leadID = nlapiSubmitRecord(lead, true);
+          //   } else {
+          //     lead.setFieldValue("entityid", data.firstname + " " + data.lastname);
+
+          //     var number = 1;
+          //     do { //Find a unique ID using trial and error
+          //       try {
+          //         leadID = nlapiSubmitRecord(lead, true);
+          //       } catch (err2) {
+          //         if (err2.code == "UNIQUE_CUST_ID_REQD") {
+          //           number++;
+          //           lead.setFieldValue("entityid", data.firstname + " " + data.lastname + " " + number);
+          //         } else {
+          //           throw (err2);
+          //         }
+
+          //       }
+
+          //     } while (!leadID);
+          //   }
+          // }
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+        
+
+
+        //setup new case
+        newCaseRecord = nlapiCreateRecord('supportcase');
+        newCaseRecord.setFieldValue('title', "Credit Account Application | " + data.host);
+        newCaseRecord.setFieldValue('incomingmessage', data.firstname + " " + data.lastname + " from " + data.company + " would like to apply for a credit account.");
+        newCaseRecord.setFieldValue('generalemailaddress', data.generalemailaddress);
+        newCaseRecord.setFieldValue('company', leadID);
+
+        if (data.phone) {
+          newCaseRecord.setFieldValue('phone', data.phone);
+        }
+
+        if (contactID) {
+          newCaseRecord.setFieldValue('contact', contactID);
+        }
+
+        //nlapiLogExecution("ERROR", "caseconfiguration", JSON.stringify(caseconfiguration));
+        newCaseRecord.setFieldValue('status', caseconfiguration.defaultValues.statusStart.id); // Not Started
+        newCaseRecord.setFieldValue('origin', caseconfiguration.defaultValues.origin.id); // Web
+
+        //submit / create the case in NS...
+        caseID = nlapiSubmitRecord(newCaseRecord);
+
+
+
+
+
+        //Gather shizzle for email notification
+        if (leadID) {
+          params.push({
+            name: "Customer",
+            value: "View in NetSuite",
+            href: "https://system.eu2.netsuite.com" + nlapiResolveURL('RECORD', 'customer', leadID)
+          });
+        }
+        if (contactID) {
+          params.push({
+            name: "Contact",
+            value: "View in NetSuite",
+            href: "https://system.eu2.netsuite.com" + nlapiResolveURL('RECORD', 'contact', contactID)
+          });
+        }
+        if (caseID) {
+          params.push({
+            name: "Case",
+            value: "View in NetSuite",
+            href: "https://system.eu2.netsuite.com" + nlapiResolveURL('RECORD', 'supportcase', caseID)
+          });
+
+          reply = "https://system.eu2.netsuite.com" + nlapiResolveURL('RECORD', 'supportcase', caseID, "EDIT");
+        }
+
+
+        //Send the email notification
+        Tools.emailAlert(69397, notify, "Trade Registration", "Please create a trade account for " + data.company + ".", "<p><span style=\"color:#888;\">Name:</span> " + data.firstname + " " + data.lastname + "</p><p><span style=\"color:#888;\">Company:</span> " + data.company + "</p>", params);
+
+        return {
+          successMessage: 'Thanks for contacting us. Your request for a trade account has been received. We will review your details get back to you shorty.'
+        };
+
+
+      } catch (e) {
+
+        nlapiLogExecution("ERROR", "Register B2B Error", JSON.stringify(e));
+
+        return {
+          status: 500,
+          code: 'ERR_FORM',
+          message: 'There was an error submitting the form, please try again later.',
+          stack: e.details || e.message || e
+        }
+      }
+
+    }
+  });
+});

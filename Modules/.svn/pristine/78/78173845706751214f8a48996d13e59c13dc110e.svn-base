@@ -1,0 +1,37 @@
+/*
+	© 2017 NetSuite Inc.
+	User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+	provided, however, if you are an authorized user with a NetSuite account or log-in, you
+	may use this code subject to the terms that govern your access and use.
+*/
+
+.header-logo {
+}
+
+.header-logo-image {
+	width:290px;
+	height:45px;
+	display:inline-block;
+margin-top:2px;
+	background-image: url('../img/StonetoolsLogo.png');
+    background-image: url('../img/StonetoolsLogo.svg');
+    background-size:100% 100%;
+
+@media(max-width: 600px) {
+		
+		width:203px;
+	height:31px;
+	margin-top:7px;
+	}
+
+}
+.header-logo-list{display:inline-block;white-space: nowrap;vertical-align:middle;}
+.header-logo-list > li {display:inline-block;white-space: nowrap;vertical-align:middle;}
+
+.header-logo-container{
+@media(min-width: $screen-md-min) {
+		text-align:center;
+	}
+}
+
+

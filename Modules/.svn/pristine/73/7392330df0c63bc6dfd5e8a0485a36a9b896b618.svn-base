@@ -1,0 +1,26 @@
+define('RegisterB2B.ServiceController'
+, [
+    'ServiceController'
+  , 'Application'
+  , 'RegisterB2B.Model'
+  ]
+, function
+  (
+    ServiceController
+  , Application
+  , ContactUsModel
+  )
+{
+  
+  'use strict';
+
+  return ServiceController.extend({
+    name: 'RegisterB2B.ServiceController',
+    
+    post: function()
+    {
+      this.sendContent(ContactUsModel.create(this.data));
+    }
+
+  });
+});

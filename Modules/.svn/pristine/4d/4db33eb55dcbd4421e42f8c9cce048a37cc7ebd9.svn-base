@@ -1,0 +1,25 @@
+define('ContactUsTest'
+, [
+    'ContactUsTest.Router'
+  , 'SC.Configuration'
+  ]
+, function
+  (
+    ContactUsTestRouter
+  , Configuration
+  )
+{
+  'use strict';
+
+  return {
+    mountToApp: function(application)
+    {
+      var enabled = Configuration.get('contactUsTest.enabled');
+
+      if (enabled)
+      {
+        return new ContactUsTestRouter(application);
+      }
+    }
+  }
+});

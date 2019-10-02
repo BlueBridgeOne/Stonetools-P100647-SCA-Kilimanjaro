@@ -1,0 +1,200 @@
+{
+    "type": "object",
+    "subtab":
+    {
+        "id": "footer",
+        "title": "Footer",
+        "description": "Footer settings",
+        "docRef": "bridgehead_4393101142",
+        "group": "layout"
+    },
+    "properties":
+    {
+        "footer.navigationLinks":
+        {
+            "group": "layout",
+            "subtab": "footer",
+            "type": "array",
+            "title": "Footer navigation",
+            "description": "Footer navigation links that goes in the footer",
+            "items":
+            {
+                "type": "object",
+                "properties":
+                {
+                    "text":
+                    {
+                        "type": "string",
+                        "title": "Text",
+                        "description": ""
+                    },
+                    "href":
+                    {
+                        "type": "string",
+                        "title": "URL",
+                        "description": ""
+                    },
+                    "list": {
+                        "type": "string",
+                        "title": "List",
+                        "description": "Place this link in a specific area of the footer.",
+                        "enum": ["Shop","Help","Account","Values","Stonetools"]
+                    },
+                    "language": {
+                        "type": "string",
+                        "title": "Language",
+                        "description": "The link is in this language.",
+                        "enum": ["en", "fr"]
+                    }
+                }
+            },
+            "default": [
+            {
+                "text": "Product Highlights",
+                "href": "#resources/product-highlights",
+                "list":"Shop",
+                "language":"en"
+            },
+            {
+                "text": "New Stone Working Tools",
+                "href": "#more/new-stone-working-tools",
+                "list":"Shop",
+                "language":"en"
+            },
+            {
+                "text": "Tools for my industry",
+                "href": "#resources/tools-for-my-industry",
+                "list":"Shop",
+                "language":"en"
+            },
+            {
+                "text": "Shop Window",
+                "href": "#shopwindow",
+                "list":"Shop",
+                "language":"en"
+            },
+{
+                "text": "Brands",
+                "href": "#brands",
+                "list":"Shop",
+                "language":"en"
+            },
+            {
+                "text": "Contact Us",
+                "href": "#contact-us",
+                "list":"Help",
+                "language":"en"
+            },{
+                "text": "Opening Times",
+                "href": "#support/contact-stonetools/opening-times",
+                "list":"Help",
+                "language":"en"
+            },
+            {
+                "text": "Help with Ordering",
+                "href": "#support/ordering",
+                "list":"Help",
+                "language":"en"
+            },
+            {
+                "text": "Managing your Stock",
+                "href": "#support/managing-my-stock",
+                "list":"Help",
+                "language":"en"
+            },
+            {
+                "text": "Resources Zone",
+                "href": "#resources",
+                "list":"Help",
+                "language":"en"
+            },
+            {
+                "text": "Create an Account",
+                "href": "#support/my-account/how-to-create-an-account",
+                "list":"Help",
+                "language":"en"
+            },
+
+            {
+                "text": "Our Values",
+                "href": "#explore/stonetools-brand/our-values",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "Privacy policy",
+                "href": "#explore/stonetools-policies/privacy-policy",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "Use of cookies",
+                "href": "#explore/stonetools-policies/use-of-cookies-policy",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "Purchasing and Supply Chain Policy",
+                "href": "#explore/stonetools-policies/purchasing-and-supply-chain-policy",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "Anti-bribery",
+                "href": "#explore/stonetools-policies/anti-bribery-policy",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "Quality",
+                "href": "#explore/stonetools-policies/quality-policy",
+                "list":"Values",
+                "language":"en"
+            },
+            {
+                "text": "About Stonetools",
+                "href": "#explore/about-stonetools",
+                "list":"Stonetools",
+                "language":"en"
+            },{
+                "text": "Legal",
+                "href": "#support/legal",
+                "list":"Stonetools",
+                "language":"en"
+            },
+
+            {
+                "text": "Careers at Stonetools",
+                "href": "#careers",
+                "list":"Stonetools",
+                "language":"en"
+            },
+            {
+                "text": "Warranty",
+                "href": "#support/warranty",
+                "list":"Stonetools",
+                "language":"en"
+            },
+            {
+                "text": "Web Terms and Conditions",
+                "href": "#support/legal/web-terms-and-conditions",
+                "list":"Stonetools",
+                "language":"en"
+            },
+            {
+                "text": "Contact Stonetools",
+                "href": "#contact-us",
+                "list":"Stonetools",
+                "language":"en"
+            },
+            {
+                "text": "Credit Account Application",
+                "href": "#credit-account-application",
+                "list":"Stonetools",
+                "language":"en"
+            }
+
+            ]
+        }
+    }
+}

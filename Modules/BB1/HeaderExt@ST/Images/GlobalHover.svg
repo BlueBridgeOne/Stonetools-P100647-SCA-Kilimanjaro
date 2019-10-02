@@ -1,0 +1,10 @@
+<svg width="19" height="19" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1{fill:#313131;}.cls-2,.cls-3{fill:none;stroke-miterlimit:10;}.cls-2{stroke:#f0f;}.cls-3{stroke:#00cf8b;stroke-width:0.59px;}</style>
+ </defs>
+ <g>
+  <g id="svg_1">
+   <path id="svg_3" d="m2.5,15.36s1.47,-2.93 7,-2.93s7,2.93 7,2.93m-14,-11.72s1.47,2.93 7,2.93s7,-2.93 7,-2.93m-6.42,-3.23a12.11,12.11 0 0 1 0,18.17m-1.17,-18.17a12.11,12.11 0 0 0 0,18.17m9.67,-9.08l-18.17,0m9.09,-9.09l0,18.17m0,-18.2a9.12,9.12 0 1 1 -9.12,9.12a9.12,9.12 0 0 1 9.12,-9.12z" class="cls-3"/>
+  </g>
+ </g>
+</svg>

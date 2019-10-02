@@ -1,0 +1,8 @@
+{
+    "distroName": "SuiteCommerce Advanced Kilimanjaro",
+    "email": "web.bluebridgeone@gmail.com",
+    "account": "4554490",
+    "role": 1033,
+    "hostname": "4554490.restlets.api.netsuite.com",
+    "target_folder": "67990"
+}

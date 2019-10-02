@@ -1,0 +1,68 @@
+define('RegisterB2B.Router', [
+  'Backbone',
+  'RegisterB2B.View',
+  'RegisterB2B.ThankYou.View'
+], function (
+  Backbone,
+  RegisterB2BView,
+  RegisterB2BThankYouView
+) {
+  'use strict';
+
+  return Backbone.Router.extend({
+    routes: {
+      'credit-account-application/thank-you': 'RegisterB2BThankYou',
+      'credit-account-application': 'RegisterB2B',
+      'bb1/translations': 'Translations',
+      'bb1/scatranslations': 'SCATranslations'
+    },
+
+    initialize: function (application) {
+      this.application = application;
+    },
+
+    CSVFormat: function (value) {
+      if (value && (value.indexOf(",") > -1 || value.indexOf("\"") > -1)) {
+        value = "\"" + value.split("\"").join("\\\"") + "\"";
+      }
+      return value;
+    },
+
+    SCATranslations: function (options) { //List all translations in the console
+      if (SC.Translations) {
+        var body = "From,To\r\n";
+        for (var phrase in SC.Translations) {
+          body += this.CSVFormat(phrase) + "," + this.CSVFormat(SC.Translations[phrase]) + "\r\n";
+        }
+        console.log(body);
+      }
+    },
+
+    Translations: function (options) { //List all translations in the console
+      if (SC.bb1_translations) {
+        var body = "English,French\r\n";
+        for (var phrase in SC.bb1_translations) {
+          body += this.CSVFormat(phrase) + "," + this.CSVFormat(phrase) + "\r\n";
+        }
+        console.log(body);
+      }
+    },
+
+    RegisterB2BThankYou: function (options) {
+      var view = new RegisterB2BThankYouView({
+        application: this.application
+      });
+
+      view.showContent();
+    },
+    
+    RegisterB2B: function (options) {
+      var view = new RegisterB2BView({
+        application: this.application,
+      });
+
+      view.showContent();
+    }
+
+  });
+});
