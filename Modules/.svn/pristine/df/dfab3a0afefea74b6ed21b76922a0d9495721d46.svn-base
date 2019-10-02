@@ -1,5 +1,0 @@
-{{! © 2017 NetSuite Inc. User may not copy, modify, distribute, or re-bundle or otherwise make available this code; provided, however, if you are an authorized user with a NetSuite account or log-in, you may use this code subject to the terms that govern your access and use. }}
-<div class="social-sharing-flyout-icons" data-type="social-share-icons"></div>
-<a class="social-sharing-flyout-content-social-print" data-navigation="ignore-click" onclick="window.print();"><i class="social-sharing-flyout-content-social-print-icon"></i> </a>
-<a class="social-sharing-flyout-content-social-email" target="_blank" data-navigation="ignore-click" onclick="document.location='mailto:?Subject='+document.title+'&Body=I%20saw%20this%20and%20thought%20of%20you!%20  '+document.location;"><i class="social-sharing-flyout-content-social-email-icon"></i> </a>
-<span class="social-sharing-flyout-text">Share</span>
