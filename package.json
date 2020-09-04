@@ -55,7 +55,7 @@
         "map-stream": "0.1.0",
         "mime": "1.2.11",
         "moment": "2.8.3",
-        "node-sass": "3.9.3",
+        "node-sass": "4.14.1",
         "ns-uploader": "file:./ns_npm_repository/ns-uploader",
         "nvm": "0.0.4",
         "preconditions": "file:./ns_npm_repository/preconditions",
