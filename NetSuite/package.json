@@ -1,0 +1,14 @@
+{
+  "name": "netsuite",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "permissions": "chmod +x ./netsuite.sh",
+    "netsuite": "./netsuite.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.3.4"
+  }
+}
