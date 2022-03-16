@@ -1,0 +1,172 @@
+<!--
+ * Advanced PDF - Packing Note Body
+ *
+ *
+ * Version    Date            Author           					Remarks
+ * 2          Mar 2018        G Truslove (Bluebridge One)		Re-engineered to use style variables and body template
+ -->
+
+<table style="${style_header_table}">
+    <tr>
+        <td colspan="16" style="${style_header_address}">
+            ${record.entityname}
+            <#if record.entityname?has_content><br /></#if>
+            ${record.billaddr1}
+            <#if record.billaddr1?has_content><br /></#if>
+            ${record.billaddr2}
+            <#if record.billaddr2?has_content><br /></#if>
+            ${record.billaddr3}
+            <#if record.billaddr3?has_content><br /></#if>
+            ${record.billcity}
+            <#if record.billcity?has_content><br /></#if>
+            ${record.billstate}
+            <#if record.billstate?has_content><br /></#if>
+            ${record.billzip}
+            <#if record.shipzip?has_content><br /></#if>
+            ${record.custbody_bb1_full_billing_country}
+        </td>
+        <td colspan="8" height="100%">
+            <table style="${style_table_right}padding-top:5px;">
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Date}</td>
+                    <td colspan="4" style="${style_header_value}">${record.trandate}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Item_Fulfillment_Number}</td>
+                    <td colspan="4" style="${style_header_value}">${record.tranid}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Sales_Order}</td>
+                    <td colspan="4" style="${style_header_value}">${record.createdfrom?replace("Sales Order #", "")}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.PO_Number}</td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_if_po_number}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Ordered_By}</td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_ordered_by?replace("${record.entityname} : ", "")}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">
+                        <#if record.custbody_bb1_tracking_numbers?contains( ",")>${trans.Tracking_Numbers}
+                            <#else>${trans.Tracking_Number}</#if>
+                    </td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_tracking_numbers}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Shipping_Method}</td>
+                    <td colspan="4" style="${style_header_value}">
+                        <p align="left">${record.shipmethod}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Contact_Name}</td>
+                    <td colspan="4" style="${style_header_value}">${record.shipattention}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Contact_Telephone}</td>
+                    <td colspan="4" style="${style_header_value}">${record.shipphone}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<#if record.item?has_content>
+
+ <table style="${style_table_list}">
+        <#assign x=1>
+            <thead>
+                <tr style="min-height:20px;">
+                    <th style="${style_th_list}" colspan="2"><p align="left">${trans.Item_Code}</p></th>
+                    <th style="${style_th_list}" colspan="13"><p align="left">${trans.Item_Description}</p></th>
+                    <th style="${style_th_list}" colspan="1">&nbsp;</th>
+                    <th style="${style_th_list}" colspan="3"><p align="left">${trans.Ordered}</p></th>
+                    <th style="${style_th_list}" colspan="2"><p align="left">${trans.Shipped}</p></th>
+                    <th style="${style_th_list}" colspan="3"><p align="left">${trans.Back_Ordered}</p></th>
+                </tr>
+            </thead>
+
+ <#if record.showAddlItemsPackSlip=='NONE'>
+                <!-- start items -->
+                <#list record.item as item>
+                    <#list salesorder.item as tranline>
+                        <#if tranline.line==item.orderline>
+
+                            <tr style="background-color: ${((x % 2)==0)?string('#e6e7e8', '#ffffff')}; min-height:14px;">
+                                <td style="${style_td_list}" colspan="2" align="left">${item.item}</td>
+                                <td style="${style_td_list}" colspan="13" align="left">${item.description}</td>
+                                <td style="${style_td_list}" colspan="1" align="left">&nbsp;</td>
+                                <td style="${style_td_list}" colspan="3" align="left" class="ItemValue">${tranline.quantity}</td>
+                                <td style="${style_td_list}" colspan="2" align="left" class="ItemValue">${item.quantity}</td>
+                                <td style="${style_td_list}" colspan="3" align="left" class="ItemValue">${tranline.quantitybackordered}</td>
+                            </tr>
+
+                        </#if>
+                    </#list>
+                </#list>
+                                <!-- end items -->
+                <#elseif record.showAddlItemsPackSlip=='ALL'>
+                    <!-- start items from sales order -->
+                    <#list salesorder.item as tranline>
+                        <#assign shipped=0>
+
+                            <#list record.item as item>
+                                <#if tranline.line==item.orderline>
+                                    <#assign shipped=item.quantity>
+                                        <#assign x=x + 1>
+                                </#if>
+                            </#list>
+
+                            <tr style="background-color: ${((x % 2)==0)?string('#e6e7e8', '#ffffff')}; min-height:14px;">
+                                <td style="${style_td_list}" colspan="2" align="left">${tranline.custcol_bb1_item_no}</td>
+                                <td style="${style_td_list}" colspan="13" align="left">${tranline.description}</td>
+                                <td style="${style_td_list}" colspan="1" align="left">&nbsp;</td>
+                                <td style="${style_td_list}" colspan="3" align="left">${tranline.quantity}</td>
+                                <td style="${style_td_list}" colspan="2" align="left">${shipped}</td>
+                                <td style="${style_td_list}" colspan="3" align="left">${tranline.quantitybackordered}</td>
+                            </tr>
+
+                    </#list>
+                    
+                      <!-- end sales order items -->
+                    <#elseif record.showAddlItemsPackSlip=='UNFULFILLED'>
+                        <!-- start items from sales order -->
+                        <#list salesorder.item as tranline>
+                            <#assign shipped=0>
+                             <#assign isInList=false>
+                             <#list record.item as item>
+                                        <#if tranline.line==item.orderline>
+                                            <#assign shipped=item.quantity>
+                                                <#assign isInList=true>
+
+                                        </#if>
+                                    </#list>
+                             <#assign quantitybackordered=0>
+                             <#if tranline.quantitybackordered?has_content>
+                             <#assign quantitybackordered=tranline.quantitybackordered>
+                             </#if>
+                             
+                             
+                             <#if isInList || quantitybackordered!=0>
+
+                                        <#assign x=x + 1>
+
+                                            <tr style="background-color: ${((x % 2)==0)?string('#e6e7e8', '#ffffff')}; min-height:14px;">
+                                                <td style="${style_td_list}" colspan="2" align="left">${tranline.custcol_bb1_item_no}</td>
+                                                <td style="${style_td_list}" colspan="13" align="left">${tranline.description}</td>
+                                                <td style="${style_td_list}" colspan="1" align="left">&nbsp;</td>
+                                                <td style="${style_td_list}" colspan="3" align="left">${tranline.quantity}</td>
+                                                <td style="${style_td_list}" colspan="2" align="left">${shipped}</td>
+                                                <td style="${style_td_list}" colspan="3" align="left">${tranline.quantitybackordered}</td>
+                                            </tr>
+                                    </#if>
+                                    
+                              </#list>
+                        <!-- end sales order items -->
+                
+                </#if>            
+</table>
+   
+</#if>

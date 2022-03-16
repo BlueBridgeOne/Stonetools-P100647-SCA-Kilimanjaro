@@ -49,6 +49,8 @@ interface iIndex {
 interface iName {
     name: string;
     join?: string;
+    label?:string;
+    sort?:"ASC"|"DESC";
 }
 interface iPageSize {
     pageSize: number;

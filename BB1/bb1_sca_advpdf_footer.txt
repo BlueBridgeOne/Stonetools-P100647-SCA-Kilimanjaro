@@ -1,0 +1,83 @@
+<!--
+ * Advanced PDF - Footer
+ *
+ *
+ * Version	Date			Author								Remarks
+ * 1.01		20 Sept 2017	Mark Derrick (Bluebridge One)		Updated to use new conditional Address, Contact, and Bank details.
+ * 1.02		18 Oct 2017		Mark Derrick (Bluebridge One)		Removed Sales Order Proforma 'How to Pay'
+ * 2        Mar 2018        G Truslove (Bluebridge One)		    Re-engineered to use style variables and body template
+ *	
+ -->
+
+
+  
+	<!-- If Transaction is an Invoice -->
+	
+  
+<#if PDFType == 'Invoice'>		
+  <p style="${style_p}"><b>${trans.How_To_Pay}</b></p>
+  <p style="${style_p}">${trans.Invoice_Thanks}</p>
+  <#else>
+  <div style="${style_footer_spacing}"></div>
+  </#if>
+		
+		
+<#if (PDFType == 'Invoice'&&!Proforma)||(PDFType == 'SalesOrder' && Proforma)>
+<table style="${style_footer_table}">
+<tr><td colspan="24">&nbsp;</td></tr>
+					<tr>
+						<td style="${style_footer_text}" colspan="7" rowspan="4">
+							<b>${companyInformation.companyName}</b><br />${settings.address}
+							<br />
+							<b>${trans.Reg}&nbsp;</b>${settings.reg}<b>&nbsp;&nbsp;${trans.VAT}&nbsp;</b>${settings.vat}
+						</td>
+						<td style="${style_footer_text}" colspan="2"><b>${trans.Tel}</b></td>
+						<td style="${style_footer_text}" colspan="6" >${settings.phone}</td>
+						<td style="${style_footer_text}" colspan="7"><b>${settings.invoice_bank_name}</b></td>
+						<td style="${style_footer_text}" colspan="2"><b>${trans.Page}</b></td>
+					</tr>  
+					<tr>
+						<td style="${style_footer_text}" colspan="2"><b>${trans.Email}</b></td>
+						<td style="${style_footer_text}" colspan="6">${settings.email}</td>
+						<td style="${style_footer_text}" colspan="3"><b>${trans.Account_Number}</b></td>
+						<td style="${style_footer_text}" colspan="4">${settings.invoice_bank_account}</td>
+					</tr>
+					<tr>
+						<td style="${style_footer_text}" colspan="2"><b>${trans.Web}</b></td>
+						<td style="${style_footer_text}" colspan="6" >${settings.web}</td>
+						<td style="${style_footer_text}" colspan="3"><b>${trans.Sort_Code}</b></td>
+						<td style="${style_footer_text}" colspan="4">${settings.invoice_bank_sort}</td>
+						<td style="${style_footer_text}" colspan="2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td style="${style_footer_text}" colspan="2">&nbsp;</td>
+						<td style="${style_footer_text}" colspan="6">&nbsp;</td>
+						<td style="${style_footer_text}" colspan="9"><b>IBAN</b>&nbsp;${settings.invoice_bank_iban}&nbsp;&nbsp;<b>SWIFT</b>&nbsp;${settings.invoice_bank_swift}&nbsp;</td>
+
+					</tr>
+				</table>
+				<#else>
+				<table style="${style_footer_table}">
+				<tr><td colspan="24">&nbsp;</td></tr>
+					<tr>
+						<td style="${style_footer_text}" colspan="16" rowspan="3">
+							<b>${companyInformation.companyName}</b><br />${settings.address}
+							<br />
+							<b>${trans.Reg}&nbsp;</b>${settings.reg}<b>&nbsp;&nbsp;${trans.VAT}&nbsp;</b>${settings.vat}
+						</td>
+						<td style="${style_footer_text}" colspan="4"><b>${trans.Tel}</b></td>
+						<td style="${style_footer_text}" colspan="4" >${settings.phone}</td>
+					</tr>
+					<tr>
+						<td style="${style_footer_text}" colspan="4"><b>${trans.Email}</b></td>
+						<td style="${style_footer_text}" colspan="4">${settings.email}</td>
+					</tr>  
+					<tr>
+						<td style="${style_footer_text}" colspan="4"><b>${trans.Web}</b></td>
+						<td style="${style_footer_text}" colspan="4" >${settings.web}</td>
+					</tr>
+					
+				</table>
+
+			</#if>
+

@@ -7,7 +7,9 @@ printf "\e[0;32m--------------\e[0m\n"
 printf "\n"
 
 printf "\e[0;34mCompile Typescript\e[0m\n"
+tsc  ./src/catalogueCSV/c25_catalogue_mr.ts --outFile ./dist/c25_catalogue_mr.js
 tsc  ./src/CleanCustomers/c25_cleancustomers_ue.ts --outFile ./dist/c25_cleancustomers_ue.js
+tsc  ./src/CleanCustomers/c25_cleancustomers_mr.ts --outFile ./dist/c25_cleancustomers_mr.js
 
 printf "done.\n\n"
 

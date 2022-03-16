@@ -1,0 +1,122 @@
+<?xml version="1.0"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
+<pdf>
+
+<!--
+ * Packing Slip Form 
+ *
+ *
+ * Version    Date            Author           					Remarks
+ * 1.01       20 Sept 2017    Mark Derrick (Bluebridge One)		Updated to use new calculated SubTotal in both English and French sections
+ * 1.02       28 Sept 2017    Mark Derrick (Bluebridge One)		Updated custom SubTotal routine to correctly display '.00'
+ * 1.03       10 Oct 2017     Mark Derrick (Bluebridge One)		Added new 'PDFType' variable for use with revised Footer file
+ * 2          Mar 2018        G Truslove (Bluebridge One)		Re-engineered to use style variables and body template
+ -->
+
+<head>
+<#if .locale?contains("fr_")>
+<#assign PDFTitle="Commande expédiée">
+<#else>
+<#assign PDFTitle="Order Shipped">
+</#if>
+<#assign PDFTitleColour="#f37375">
+<#assign PDFType="PackingSlip">
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=122094&c=4554490&h=3dc3258df32915372d64&_xt=.txt">
+</head>
+<body style="${style_body}">
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=121892&c=4554490&h=c7c645eb94918d2316bf&_xt=.txt">
+<table style="${style_header_table}">
+    <tr>
+        <td colspan="16" style="${style_header_address}">
+
+        </td>
+        <td colspan="8" height="100%">
+            <table style="${style_table_right}">
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Date}</td>
+                    <td colspan="4" style="${style_header_value}">${record.trandate}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Item_Fulfillment_Number}</td>
+                    <td colspan="4" style="${style_header_value}">${record.tranid}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Sales_Order}</td>
+                    <td colspan="4" style="${style_header_value}">${record.createdfrom?replace("Sales Order #", "")}</td>
+                </tr>
+                <#if record.custbody_bb1_if_po_number?has_content>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.PO_Number}</td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_if_po_number}</td>
+                </tr>
+                </#if>
+                <#if record.custbody_bb1_ordered_by?has_content>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Ordered_By}</td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_ordered_by?replace("${record.entityname} : ", "")}</td>
+                </tr>
+                </#if>
+                <#if record.custbody_bb1_tracking_numbers?has_content>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">
+                        <#if record.custbody_bb1_tracking_numbers?contains( ",")>${trans.Tracking_Numbers}
+                            <#else>${trans.Tracking_Number}</#if>
+                    </td>
+                    <td colspan="4" style="${style_header_value}">${record.custbody_bb1_tracking_numbers}</td>
+                </tr>
+                </#if>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Shipping_Method}</td>
+                    <td colspan="4" style="${style_header_value}">${record.shipmethod}</td>
+                </tr>
+                <#if record.shipattention?has_content>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Contact_Name}</td>
+                    <td colspan="4" style="${style_header_value}">${record.shipattention}</td>
+                </tr>
+                </#if>
+                <#if record.shipphone?has_content>
+                <tr>
+                    <td colspan="4" style="${style_header_label}">${trans.Contact_Telephone}</td>
+                    <td colspan="4" style="${style_header_value}">${record.shipphone}</td>
+                </tr>
+                </#if>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<br />
+<p style="${style_p}">${trans.Order_Shipped}</p>
+
+<#if record.item?has_content>
+
+ <table style="${style_table_list}">
+        <#assign x=1>
+            <thead>
+                <tr>
+                    <th style="${style_th_list}" colspan="2"><p align="left">${trans.Item_Code}</p></th>
+                    <th style="${style_th_list}" colspan="13"><p align="left">${trans.Item_Description}</p></th>
+                    <th style="${style_th_list}" colspan="1">&nbsp;</th>
+                    <th style="${style_th_list}" colspan="2"><p align="left">${trans.Shipped}</p></th>
+                </tr>
+            </thead>
+
+ 
+                <!-- start items -->
+                <#list record.item as item>
+
+                            <tr style="background-color: ${((x % 2)==0)?string('#e6e7e8', '#ffffff')};">
+                                <td style="${style_td_list}" colspan="2" align="left">${item.item}</td>
+                                <td style="${style_td_list}" colspan="13" align="left">${item.itemdescription}</td>
+                                <td style="${style_td_list}" colspan="1" align="left">&nbsp;</td>
+                                <td style="${style_td_list}" colspan="2" align="left" class="ItemValue">${item.quantity}</td>
+                            </tr>
+
+                </#list>
+                      
+</table>
+   
+</#if>
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=121890&c=4554490&h=64c259be276f0392a58f&_xt=.txt">
+</body>
+</pdf>

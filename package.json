@@ -5,7 +5,8 @@
     "main": "gulpfile.js",
     "private": true,
     "scripts": {
-        "test": "node gulp/spec"
+        "test": "node gulp/spec",
+        "netsuite":"cd NetSuite&&npm run netsuite"
     },
     "author": "",
     "license": "ISC",

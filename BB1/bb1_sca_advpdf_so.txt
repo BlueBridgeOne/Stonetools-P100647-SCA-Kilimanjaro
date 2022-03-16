@@ -1,0 +1,196 @@
+<?xml version="1.0"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
+<pdf>
+
+<!--
+ * Sales Order Form 
+ *
+ *
+ * Version    Date            Author           					Remarks
+ * 1.01       20 Sept 2017    Mark Derrick (Bluebridge One)		Updated to use new calculated SubTotal in both English and French sections
+ * 1.02       28 Sept 2017    Mark Derrick (Bluebridge One)		Updated custom SubTotal routine to correctly display '.00'
+ * 1.03       10 Oct 2017     Mark Derrick (Bluebridge One)		Added new 'PDFType' variable for use with revised Footer file
+ * 2          Mar 2018        G Truslove (Bluebridge One)		Re-engineered to use style variables and body template
+ -->
+
+<head>
+<#if .locale?contains("fr_")>
+<#assign PDFTitle="Confirmation de commande">
+<#else>
+<#assign PDFTitle="Sales Order Confirmation">
+</#if>
+<#assign PDFTitleColour="#f37375">
+<#assign PDFType="SalesOrder">
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=122094&c=4554490&h=3dc3258df32915372d64&_xt=.txt">
+</head>
+<body style="${style_body}">
+
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=121892&c=4554490&h=c7c645eb94918d2316bf&_xt=.txt">
+<table style="${style_header_table}">
+  <tr>
+	<td colspan="16" style="${style_header_address}">
+                           
+	</td>
+    <td colspan="8" height="100%">
+  		<table style="${style_table_right}">
+                  <tr>
+						<td colspan="4" style="${style_header_label}">${record.trandate@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.trandate}</td>
+					</tr>
+					<tr>
+						<td colspan="4" style="${style_header_label}">${record.tranid@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.tranid}</td>
+					</tr>
+					<#if record.custbody_bb1_ordered_by?has_content>
+         			 <tr>
+						<td colspan="4" style="${style_header_label}">${record.custbody_bb1_ordered_by@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.custbody_bb1_ordered_by?replace("${record.entityname} : ", "")}</td>
+					</tr>
+					</#if>
+					<#if record.otherrefnum?has_content>
+          			<tr>
+						<td colspan="4" style="${style_header_label}">${record.otherrefnum@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.otherrefnum}</td>
+					</tr>
+					</#if>
+					<#if record.terms?has_content>
+					<tr>
+						<td colspan="4" style="${style_header_label}">${record.terms@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.terms?replace(" (Customer)", "")}</td>
+					</tr>
+					</#if>
+					<tr>
+						<td colspan="4" style="${style_header_label}">${record.shipmethod@label}</td>
+						<td colspan="4" style="${style_header_value}">${record.shipmethod}</td>
+					</tr>
+					<tr>
+						<td style="${style_header_break}" colspan="8">
+                          <p align="left">
+                          <span style="${style_header_label}">${record.shipaddress@label}</span>
+                          <span style="${style_header_value}">
+                            ${record.shipaddressee}<#if record.shipaddressee?has_content>,</#if>
+                            ${record.shipaddr1}<#if record.shipaddr1?has_content>,</#if>
+                            ${record.shipaddr2}<#if record.shipaddr2?has_content>,</#if>
+                            ${record.shipaddr3}<#if record.shipaddr3?has_content>,</#if>
+                            ${record.shipcity}<#if record.shipcity?has_content>,</#if>
+                            ${record.shipstate}<#if record.shipstate?has_content>,</#if>
+                            <span style="white-space: nowrap;">${record.shipzip}<#if record.shipzip?has_content>, </#if></span>
+                            ${record.custbody_bb1_full_shipping_country }
+                          </span>
+                         </p>
+                      </td>
+					</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+<br />
+<p style="${style_p}">${trans.Order_Thanks}</p>
+
+	<#if record.item?has_content>
+
+<table style="${style_table_list}">
+		<!-- start items -->
+		<#list record.item as item>
+		<#if item_index==0>
+		<thead>
+			<tr>
+                <th style="${style_th_list}" colspan="2" align="left" >${item.quantity@label}</th>
+				<th style="${style_th_list}" colspan="3" align="left" >${item.custcol_bb1_item_no@label}</th>
+				<th style="${style_th_list}" colspan="10" align="left" >${item.description@label}</th>
+              	<th style="${style_th_list}" colspan="1" align="left" >&nbsp;</th>
+				<th style="${style_th_list}" colspan="4" align="left" >${item.rate@label}</th>
+				<th style="${style_th_list}" colspan="4" align="left" >${item.amount@label}</th>
+			</tr>
+		</thead>
+		</#if>
+		<tr style="background-color: ${((item_index % 2)==1)?string('#ffffff', '#e6e7e8')};">
+            <td style="${style_td_list}" colspan="2" align="left" >${item.quantity}</td>
+			<td style="${style_td_list}" colspan="3" align="left" >${item.custcol_bb1_item_no}</td>
+			<td style="${style_td_list}" colspan="10" align="left" >${item.description}</td>
+          	<td style="${style_td_list}" colspan="1" align="left" >&nbsp;</td>
+			<td style="${style_td_list}" colspan="4" align="left" >${item.rate}</td>
+			<td style="${style_td_list}" colspan="4" align="left" >${item.amount}</td>
+		</tr>
+	</#list>
+</table>
+</#if>
+
+<#if .locale?contains("fr_")>
+
+<table style="${style_table_sublist}">
+	<#if record.shippingcost != 0.00><tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">Coût d'expédition</td>
+      	<td style="${style_td_list}" colspan="4" align="left">${record.shippingcost}</td>
+	</tr></#if>
+	<tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">Sous-Total HT</td>
+
+<!-- 
+          New CombinedSubTotal value then added to layout, set as currency type with correct currency symbol
+ -->
+      	<td style="${style_td_list}" colspan="4" align="left">
+      	<#if record.currency == "EUR"><#assign CurrencySymbol="&euro;"><#assign CurrencyChar="€">
+      	<#elseif record.currency == "USD"><#assign CurrencySymbol="&dollar;"><#assign CurrencyChar="$">
+      	<#elseif record.currency == "GBP"><#assign CurrencySymbol="&pound;"><#assign CurrencyChar="£">
+      	</#if>
+        <#assign CombinedSubTotalValue=(record.shippingcost+record.subtotal)>
+      	<#assign CombinedSubTotal="${CombinedSubTotalValue?string.currency}">
+        ${CurrencySymbol}${CombinedSubTotal?replace(CurrencyChar, '')}
+      	</td>
+	</tr>
+	<tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">TVA</td>
+      	<td style="${style_td_list}" colspan="4" align="left">${record.taxtotal}</td>
+	</tr>
+    <tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">Total TTC</td>
+      	<td style="${style_td_bold_list}" colspan="4" align="left">${record.total}</td>
+	</tr>
+</table>
+  
+<#else>
+
+<table style="${style_table_sublist}">
+	<#if record.shippingcost != 0.00><tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">${record.shippingcost@label}</td>
+      	<td style="${style_td_list}" colspan="4" align="left">${record.shippingcost}</td>
+	</tr>
+   </#if>
+    <tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">${record.subtotal@label}</td>
+
+<!-- 
+          New CombinedSubTotal value then added to layout, set as currency type with correct currency symbol
+ -->
+      	<td style="${style_td_list}" colspan="4" align="left">
+      	<#if record.currency == "EUR"><#assign CurrencySymbol="&euro;">
+      	<#elseif record.currency == "USD"><#assign CurrencySymbol="&dollar;">
+      	<#elseif record.currency == "GBP"><#assign CurrencySymbol="&pound;">
+      	</#if>
+        <#assign CombinedSubTotalValue=(record.shippingcost+record.subtotal)>
+      	<#assign CombinedSubTotal="${CombinedSubTotalValue?string.currency}">
+        ${CurrencySymbol}${CombinedSubTotal?replace('£', '')}
+      	</td>
+	</tr>
+	<tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">${record.taxtotal@label}</td>
+      	<td style="${style_td_list}" colspan="4" align="left">${record.taxtotal}</td>
+	</tr>
+    <tr>
+		<td colspan="16">&nbsp;</td>
+		<td style="${style_td_label_list}" colspan="4" align="left">${record.total@label}</td>
+      	<td style="${style_td_bold_list}" colspan="4" align="left">${record.total}</td>
+	</tr>
+</table>
+
+</#if>
+<#include "https://system.eu2.netsuite.com/core/media/media.nl?id=121890&c=4554490&h=64c259be276f0392a58f&_xt=.txt">
+</body>
+</pdf>

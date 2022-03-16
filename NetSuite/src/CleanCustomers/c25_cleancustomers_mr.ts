@@ -1,5 +1,5 @@
 /**
- * Description : 
+ * Description : Delete all the spam customers.
  * 
  * @Author : Gordon Truslove - code25.com
  * @Date   : 2/9/2022, 4:22:29 PM
@@ -33,9 +33,9 @@ function(record:iRecord, search:iSearch,runtime:iRuntime) {
 			type: "customer",
 			filters:
 			[
-			   ["shippingaddress.address1","startswith","506 Boulevard"],
-			   "AND", 
-      ["internalidnumber","greaterthan","429850"]
+			   ["shippingaddress.address1","startswith","506 Boulevard"]
+	// 		   ,"AND", 
+    //   ["internalidnumber","greaterthan","429850"]
 			],
 			columns:
 			[
@@ -63,6 +63,8 @@ function(record:iRecord, search:iSearch,runtime:iRuntime) {
 		if (!abort()) {
 			log.debug("Process MAP", "context=" + context.key);
             let searchResult:any = JSON.parse(context.value);
+			log.debug("Process MAP", "value=" + context.value);
+			record.delete({type:searchResult.recordType,id:searchResult.id});
         }
 
 	}
@@ -115,7 +117,7 @@ function(record:iRecord, search:iSearch,runtime:iRuntime) {
 			return isAbort;
 		}
 		let abort:any = runtime.getCurrentScript().getParameter({
-			name : 'custscript_bb1_abort'
+			name : 'custscript_c25_spamabort'
 		});
 		let newAbort:boolean = (abort == "T" || abort == true);
 		if (!isAbort && newAbort) {

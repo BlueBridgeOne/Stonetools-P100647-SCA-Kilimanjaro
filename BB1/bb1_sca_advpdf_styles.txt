@@ -1,0 +1,43 @@
+<!--
+ * Advanced PDF - Styles
+ *
+ *
+ * Version    Date            Author           					Remarks
+ * 2          Mar 2018        G Truslove (Bluebridge One)		Re-engineered to use style variables and body template
+ -->
+ <#assign style_font="font-family:sans-serif;">
+ <#assign style_font_largest=style_font+"font-size:21px;">
+ <#assign style_font_large=style_font+"font-size:19px;">
+ <#assign style_font_medium=style_font+"font-size:14px;">
+ <#assign style_font_small=style_font+"font-size:12px;">
+ <#assign style_font_smallest=style_font+"font-size:10px;">
+ 
+ <#assign style_body="padding:5mm;">
+ <#assign style_colour_text="color:#333;">
+ <#assign style_colour_border="#cac9c9">
+ <#assign style_colour_light="color:#afafaf;">
+
+ 
+ <#assign style_table="width:100%; padding:0px; table-layout:fixed;border-collapse: collapse;">
+ <#assign style_header_table=style_table>
+ <#assign style_table_right=style_table+"align:right;">
+ <#assign style_logo="width: 290px;height: 45px;">
+ <#assign style_header="background-color:#303030;padding:32px;width:100%;margin-bottom:20px;text-align:center;">
+ <#assign style_header_title="color:"+PDFTitleColour+";font-weight:bold;"+style_font_largest>
+ <#assign style_header_trxnum=style_colour_light+style_font_large>
+ <#assign style_header_address=style_colour_text+style_font_small+"vertical-align:top;padding-left:9%;">
+ <#assign style_header_label=style_colour_text+style_font_smallest+"font-weight:bold;">
+ <#assign style_header_value=style_colour_text+style_font_smallest>
+ <#assign style_header_break="padding-bottom:5px;margin-bottom:5px;border-bottom: 1px solid "+PDFTitleColour+";">
+ <#assign style_table_list=style_table+"border-top:1px solid "+style_colour_border+";border-bottom:1px solid "+style_colour_border+";">
+ <#assign style_th_list=style_colour_light+style_font_small+"text-transform:uppercase;padding:10px 0px 10px 5px;">
+ <#assign style_td_list=style_colour_text+style_font_small+"padding:5px 0px 5px 5px;">
+ <#assign style_td_bold_list=style_colour_text+style_font_small+"padding:5px 0px 5px 5px;font-weight:bold;">
+ <#assign style_td_label_list=style_colour_light+style_font_small+"text-transform:uppercase;padding:5px 0px 5px 5px;">
+ <#assign style_table_sublist=style_table+"border-bottom:1px solid "+style_colour_border+";">
+ <#assign style_p=style_colour_text+style_font_small+"line-height:170%;">
+ <#assign style_footer_text=style_colour_text+style_font_smallest>
+ <#assign style_footer_table=style_table>
+ <#assign style_footer_spacing="height:45px;">
+
+ 

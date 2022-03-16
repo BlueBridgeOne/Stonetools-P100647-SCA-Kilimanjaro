@@ -1,0 +1,173 @@
+<!--
+ * Advanced PDF - Header
+ *
+ *
+ * Version    Date            Author           					Remarks
+ * 1.01       12 Oct 2017     Mark Derrick (Bluebridge One)		Added assigned variables
+ * 2          Mar 2018        G Truslove (Bluebridge One)		Re-engineered to use style variables and body template
+ -->
+
+<#assign uk ={
+"phone": "+44 1892 519290",
+"fax": "+44 1892 511233",
+"email": "info@stonetools.co.uk",
+"web": "www.stonetools.co.uk",
+"address": "Unit 8, Kingstanding Business<br />Park, Kingstanding Way, Tunbridge Wells,<br />Kent, TN2 3UP, United Kingdom",
+"invoice_bank_name": "Barclays Bank PLC",
+"invoice_bank_account": "83346293",
+"invoice_bank_sort": "20-37-63",
+"invoice_bank_iban": "GB88BARC20376383346293",
+"invoice_bank_swift": "BARCGB22",
+"proforma_bank_name": "Barclays Bank PLC",
+"proforma_bank_account": "83548228",
+"proforma_bank_sort":"20-88-13",
+"proforma_bank_iban":"GB88 BARC 2037 6383 3462 93",
+"proforma_bank_swift":"BARCGB22",
+"reg": "6111732",
+"vat": "GB668172703"
+} >
+
+<#assign ireland ={
+"phone": "+353 51 810 017",
+"fax": "+44 1892 511233",
+"email": "info@stonetools.ie",
+"web": "www.stonetools.ie",
+"address": "Unit 8, Kingstanding Business<br />Park, Kingstanding Way, Tunbridge Wells,<br />Kent, TN2 3UP, United Kingdom",
+"invoice_bank_name": "Barclays Bank PLC",
+"invoice_bank_account": "59869833",
+"invoice_bank_sort": "20-37-63",
+"invoice_bank_iban": "GB63 BARC 2037 6359 8698 33",
+"invoice_bank_swift": "BARCGB22",
+"proforma_bank_name": "Barclays Bank PLC",
+"proforma_bank_account": "72416644",
+"proforma_bank_sort":"20-88-13",
+"proforma_bank_iban":"GB06 BARC 2088 1372 4166 44",
+"proforma_bank_swift":"BARCGB22",
+"reg": "6111732",
+"vat": "GB668172703"
+} >
+
+<#assign france ={
+"phone": "+33 1 86 26 62 27",
+"fax": "+33 1 82 88 65 99",
+"email": "info@stonetools.fr",
+"web": "www.stonetools.fr",
+"address": "Unit 8, Kingstanding Business<br />Park, Kingstanding Way, Tunbridge Wells,<br />Kent, TN2 3UP, Royaume-Uni",
+"invoice_bank_name": "Barclays Bank PLC",
+"invoice_bank_account": "59869833",
+"invoice_bank_sort": "20-37-63",
+"invoice_bank_iban": "GB63 BARC 2037 6359 8698 33",
+"invoice_bank_swift": "BARCGB22",
+"proforma_bank_name": "Barclays Bank PLC",
+"proforma_bank_account": "72416644",
+"proforma_bank_sort":"20-88-13",
+"proforma_bank_iban":"GB06 BARC 2088 1372 4166 44",
+"proforma_bank_swift":"BARCGB22",
+"reg": "6111732",
+"vat": "GB668172703"
+} >
+
+<#if record.department == 'France' || record.custbody_bb1_if_region == 'France'>
+<#assign settings=france>
+<#elseif record.department == 'Ireland' || record.custbody_bb1_if_region == 'Ireland'>
+<#assign settings=ireland>
+<#else>
+<#assign settings=uk>
+</#if>
+
+<#if .locale?contains("fr_")>
+<#assign trans={
+"Item_Code":"Numéro de référence",
+"Item_Description":"Description de l'article",
+"Ordered":"Commandés",
+"Shipped":"Envoyés",
+"Back_Ordered":"En reliquat",
+
+"Date":"Date",
+"Item_Fulfillment_Number":"N° d'éxécution des articles",
+"Sales_Order":"Commande",
+"PO_Number":"N° de proforma",
+"Ordered_By":"Commandé par",
+"Tracking_Number":"Numéro de suivi",
+"Tracking_Numbers":"Numéro de suivi",
+"Shipping_Method":"Méthode d'envoi",
+"Contact_Name":"Nom de contact",
+"Contact_Telephone":"Téléphone de contact",
+"Reg":"Enreg",
+"VAT":"TVA",
+"Tel":"Tel",
+"Page":"Page",
+"Fax":"Fax",
+"Of":"of",
+"Email":"Email",
+"Web":"Web",
+
+"Sort_Code":"Code de Tri",
+"Account_Number":"Numéro de Compte",
+"How_To_Pay":"Comment payer?",
+"Invoice_Thanks":"Merci pour votre collaboration. Le paiement est dû soit par virement bancaire ci dessous soit pas chèque postale à l'ordre de Stonetools Ltd. Si vous avez des questions en relation à cette facture, veuillez nous contacter.",
+"Order_Thanks":"Merci pour votre commande. Tous les articles disponibles en stock serons envoyés pour une livraison sous 2 à 3 jours ouvrables. Veuillez appeler notre équipe avant 16h si vous souhaitez modifier cette commande."
+
+}>
+<#else>
+<#assign trans={
+"Item_Code":"Item Code",
+"Item_Description":"Item Description",
+"Ordered":"Ordered",
+"Shipped":"Shipped",
+"Back_Ordered":"Back Ordered",
+"Date":"Date",
+"Item_Fulfillment_Number":"Item fulfillment number",
+"Sales_Order":"Sales order",
+"PO_Number":"PO number",
+"Ordered_By":"Ordered by",
+"Tracking_Number":"Tracking number",
+"Tracking_Numbers":"Tracking numbers",
+"Shipping_Method":"Shipping method",
+"Contact_Name":"Contact name",
+"Contact_Telephone":"Contact telephone",
+"Reg":"Reg",
+"VAT":"VAT",
+"Tel":"Tel",
+"Page":"Page",
+"Fax":"Fax",
+"Of":"of",
+"Email":"Email",
+"Web":"Web",
+
+"Sort_Code":"Sort Code",
+"Account_Number":"Account Number",
+"How_To_Pay":"How to Pay",
+"Invoice_Thanks":"Thank you for your business. Payment is due either by bank<br />transfer to the details below or by cheque payable to Stonetools Ltd. If you<br />have any questions relating to this invoice, please contact us.",
+"Order_Thanks":"Thank you for your order. All items available from stock will be dispatched for next working day delivery. Please contact one of our team by 17:40 if you wish to amend this order.",
+"Order_Shipped":"Your order has been shipped."
+
+
+}>
+</#if>
+
+<#assign Proforma=record.terms?contains("Proforma")>
+
+<div style="${style_header}">
+<a href="https://${settings.web}"><img align="center" src="https://system.eu2.netsuite.com/c.4554490/SSP%20Applications/NetSuite%20Inc.%20-%20SCA%20Kilimanjaro/Development/img/StonetoolsLogo.png" style="${style_logo}" /></a>
+</div>
+<table style="${style_header_table}">
+		<tr>
+			<td colspan="16">
+			</td>
+			<td colspan="8">
+				<table style="${style_table_right}">
+					<tr>
+						<td style="${style_header_title}"><p align="left">${PDFTitle}</p></td>                                        
+					</tr>
+					<tr>
+						<#if PDFTitle == 'STATEMENT OF ACCOUNT'>
+						<td class="trxNum" style="${style_header_trxnum+style_header_break}">${statement.trandate?string["MMMM yyyy"]}</td>
+                        <#elseif PDFTitle == 'Relevé de compte'><td class="trxNum" style="${style_header_trxnum+style_header_break}">${statement.trandate?string["MMMM yyyy"]}</td>
+                        <#else><td style="${style_header_trxnum+style_header_break}" >${record.tranid}</td>
+                        </#if>
+					</tr>
+				</table>
+			</td>
+		</tr>
+</table>
