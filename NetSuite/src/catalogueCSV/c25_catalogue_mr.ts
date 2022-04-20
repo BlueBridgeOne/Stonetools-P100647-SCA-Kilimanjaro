@@ -494,8 +494,9 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 								name: line.displayname,
 								sku: getSku(line.itemid),
 								description: line.description,
-								link:line.urlcomponent
-							},child:any;
+								link: line.urlcomponent,
+								matrix: line.matrix
+							}, child: any;
 							images = getImages(line.type, line.id);
 							//log.debug("images", JSON.stringify(images));
 							// xml += "\t<" + line.layout + "Item>\r\n";
@@ -514,27 +515,27 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 							//xml += "\t\t<Description>" + XMLString(line.description) + "</Description>\r\n";
 							if (line.features) {
 								//xml += "\t\t<Features>" + XMLString(line.features) + "</Features>\r\n";
-								item.features=line.features;
+								item.features = line.features;
 							}
 							if (line.instructions) {
 								//xml += "\t\t<Instructions>" + XMLString(line.instructions) + "</Instructions>\r\n";
-								item.instructions=line.instructions;
+								item.instructions = line.instructions;
 							}
 							if (line.included) {
 								//xml += "\t\t<Included>" + XMLString(line.included) + "</Included>\r\n";
-								item.included=line.included;
+								item.included = line.included;
 							}
 							if (line.techspecs) {
 								// xml += "\t\t<TechSpecs>" + XMLString(line.techspecs) + "</TechSpecs>\r\n";
-								item.techspecs=line.techspecs;
+								item.techspecs = line.techspecs;
 							}
 							if (line.safety) {
 								// xml += "\t\t<Safety>" + XMLString(line.safety) + "</Safety>\r\n";
-								item.safety=line.safety;
+								item.safety = line.safety;
 							}
 							if (line.recommended) {
 								// xml += "\t\t<Recommended>" + XMLString(line.recommended) + "</Recommended>\r\n";
-								item.recommended=line.recommended;
+								item.recommended = line.recommended;
 							}
 
 							// xml += "\t\t<Link>https://www.stonetools.co.uk/" + XMLString(line.urlcomponent) + "</Link>\r\n";
@@ -557,17 +558,17 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 
 							if (line.optionname1) {
 								// xml += "\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label></Option1>\r\n";
-								item.optionname1=line.optionname1;
+								item.optionname1 = line.optionname1;
 							}
 							if (line.optionname2) {
 								// xml += "\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label></Option2>\r\n";
-								item.optionname2=line.optionname2;
+								item.optionname2 = line.optionname2;
 							}
 							if (line.optionname3) {
 								// xml += "\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label></Option3>\r\n";
-								item.optionname3=line.optionname3;
+								item.optionname3 = line.optionname3;
 							}
-							line.children=[];
+							item.children = [];
 							if (line.matrix) {
 								//log.debug("Find Children For", line.id);
 								//children
@@ -614,7 +615,7 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 										name: line.displayname,
 										sku: getSku(result.getValue("itemid")),
 										baseprice: getPrice(result.getValue("baseprice")),
-										onlineprice:getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))
+										onlineprice: getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))
 									}
 
 									childIndex++;
@@ -631,29 +632,31 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 
 									if (line.optionname1) {
 										// xml += "\t\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label><Value>" + XMLString(result.getText(line.optionid1)) + "</Value></Option1>\r\n";
-										child[line.optionname1]=result.getText(line.optionid1);
+										child.optionvalue1 = result.getText(line.optionid1);
 									}
 									if (line.optionname2) {
 										// xml += "\t\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label>><Value>" + XMLString(result.getText(line.optionid2)) + "</Value></Option2>\r\n";
-										child[line.optionname2]=result.getText(line.optionid2);
+										child.optionvalue2 = result.getText(line.optionid2);
 									}
 									if (line.optionname3) {
 										// xml += "\t\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label>><Value>" + XMLString(result.getText(line.optionid3)) + "</Value></Option3>\r\n";
-										child[line.optionname3]=result.getText(line.optionid3);
+										child.optionvalue3 = result.getText(line.optionid3);
 									}
 
 									if (filteredImages[0]) {
 										// xml += "\t\t\t<Image1 href=\"" + XMLString(filteredImages[0].url) + "\"></Image1>\r\n";
-										child.image1=filteredImages[0].url;
+										child.image1 = filteredImages[0].url;
 									}
 									if (filteredImages[1]) {
 										// xml += "\t\t\t<Image2 href=\"" + XMLString(filteredImages[1].url) + "\"></Image2>\r\n";
-										child.image2=filteredImages[1].url;
+										child.image2 = filteredImages[1].url;
 									}
 									if (filteredImages[2]) {
 										// xml += "\t\t\t<Image3 href=\"" + XMLString(filteredImages[2].url) + "\"></Image3>\r\n";
-										child.image3=filteredImages[2].url;
+										child.image3 = filteredImages[2].url;
 									}
+
+									item.children.push(child);
 
 									// xml += "\t\t</" + line.layout + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ">\r\n";
 									return true;
@@ -743,13 +746,17 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			xtg += "@NormalParagraphStyle=[S\"\",\"NormalParagraphStyle\"]<z16f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
 			xtg += "@Category Title=[S\"\",\"Category Title\"]<z30f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
 			xtg += "@Sub Category=[S\"\",\"Sub Category\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+			xtg += "@Table Head=[S\"\",\"Table Head\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsTableHead") + br;
+			xtg += "@Table Cell=[S\"\",\"Table Cell\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+			xtg += "@Table Cell Price=[S\"\",\"Table Cell Price\"]<z10f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
 
-			let layouts:string[]=["Small","Medium","Large","Hero"];
-			for(let i=0;i<layouts.length;i++){
-				xtg += "@"+layouts[i]+" Item Title=[S\"\",\""+layouts[i]+" Item Title\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
-				xtg += "@"+layouts[i]+" Item Sku=[S\"\",\""+layouts[i]+" Item Sku\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
-				xtg += "@"+layouts[i]+" Item Description=[S\"\",\""+layouts[i]+" Item Description\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
-				xtg += "@"+layouts[i]+" Item Price=[S\"\",\""+layouts[i]+" Item Price\"]<z12f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
+
+			let layouts: string[] = ["Small", "Medium", "Large", "Hero"];
+			for (let i = 0; i < layouts.length; i++) {
+				xtg += "@" + layouts[i] + " Item Title=[S\"\",\"" + layouts[i] + " Item Title\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+				xtg += "@" + layouts[i] + " Item Sku=[S\"\",\"" + layouts[i] + " Item Sku\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+				xtg += "@" + layouts[i] + " Item Description=[S\"\",\"" + layouts[i] + " Item Description\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+				xtg += "@" + layouts[i] + " Item Price=[S\"\",\"" + layouts[i] + " Item Price\"]<z12f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
 			}
 			return xtg;
 		}
@@ -758,16 +765,16 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			let xtg: string = "";
 			let width: number = innerSize.width, height: number = innerSize.height * .25;
 			xtg += checkForNewPage(width, height);
-			let scale:number[]=[.3,.5,.7,.9],ix:number=width*.15;
-			for(let i:number=0;i<scale.length;i++){
-			xtg += getPicture(image, pos.x + ix, pos.y + height-(height * scale[i])-(i*(height*.0333)),  height * scale[i],  height * scale[i]);
-			ix+=height * scale[i];
+			let scale: number[] = [.3, .5, .7, .9], ix: number = width * .15;
+			for (let i: number = 0; i < scale.length; i++) {
+				xtg += getPicture(image, pos.x + ix, pos.y + height - (height * scale[i]) - (i * (height * .0333)), height * scale[i], height * scale[i]);
+				ix += height * scale[i];
 			}
-			xtg += getRectangle("StonetoolsVeryDarkGrey", pos.x , pos.y, width, height);
-			xtg += startTextbox(pos.x, pos.y+(height*.375), width, height*.25);
+			xtg += getRectangle("StonetoolsVeryDarkGrey", pos.x, pos.y, width, height);
+			xtg += startTextbox(pos.x, pos.y + (height * .375), width, height * .25);
 			xtg += setStyle("Category Title") + XString(name);
 			xtg += endTextbox();
-			
+
 			xtg += getGroup(2);
 			movePos(width, height);
 			return xtg;
@@ -776,8 +783,8 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			let xtg: string = "";
 			let width: number = innerSize.width, height: number = innerSize.height * .05;
 			xtg += checkForNewPage(width, height);
-			xtg += startTextbox(pos.x, pos.y+(height*.25), width, height*.5);
-			xtg += setStyle("Sub Category") +  XString(parent.toUpperCase()) + " " + setColour("StonetoolsCopyDark") + "/ " + XString(name.toUpperCase()) + defaultColour();
+			xtg += startTextbox(pos.x, pos.y + (height * .25), width, height * .5);
+			xtg += setStyle("Sub Category") + XString(parent.toUpperCase()) + " " + setColour("StonetoolsCopyDark") + "/ " + XString(name.toUpperCase()) + defaultColour();
 			xtg += endTextbox();
 			xtg += getGroup(1);
 			movePos(width, height);
@@ -787,20 +794,98 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 
 			let xtg: string = "";
 			let width: number = innerSize.width, height: number = innerSize.height * .2;
-			xtg += checkForNewPage(width, height);
+			let rowHeight = innerSize.height * .022, childHeight: number = item.matrix ? (1 + item.children.length) * rowHeight : 0, lineWidth: number = innerSize.height * .0015, cellPaddingX: number = innerSize.height * .01, cellPaddingY: number = innerSize.height * .003;
+			xtg += checkForNewPage(width, height + childHeight);
 			xtg += getPicture(item.image1_url, pos.x, pos.y, height, height);
-			xtg += startTextbox(pos.x + (height*1.05), pos.y, width - (height*1.05), height);
-			xtg += setStyle(item.layout+" Item Title") + XString(item.name) + br;
-			xtg += setStyle(item.layout+" Item Sku") + "CODE: " + XString(item.sku) + br + br;
-			xtg += setStyle(item.layout+" Item Description") + XString(item.description) + br + br;
-			xtg += setStyle(item.layout+" Item Price") + XString(getPrice(item.onlineprice || "0.00")) + br;
+			xtg += startTextbox(pos.x + (height * 1.05), pos.y, width - (height * 1.05), height);
+			xtg += setStyle(item.layout + " Item Title") + XString(item.name) + br;
+			xtg += setStyle(item.layout + " Item Sku") + "CODE: " + XString(item.sku) + br + br;
+			xtg += setStyle(item.layout + " Item Description") + XString(item.description) + br + br;
+			if (!item.matrix) {
+				xtg += setStyle(item.layout + " Item Price") + XString(getPrice(item.onlineprice || "0.00")) + br;
+			}
 			xtg += endTextbox();
-			xtg += getGroup(2);
-			movePos(width, height);
+
+			//children
+			if (item.matrix) {
+				let group: number, columns: number = 2;
+				if (item.optionname1) {
+					columns++;
+				}
+				if (item.optionname2) {
+					columns++;
+				}
+				if (item.optionname3) {
+					columns++;
+				}
+				let columnWidth: number = (width - (height * 1.05)) / columns;
+				let left: number = pos.x + (height * 1.05), top: number = pos.y + height;
+				xtg += getRectangle("StonetoolsTableLine", left, top, width - (height * 1.05), lineWidth);
+				group++;
+				xtg += getRectangle("StonetoolsTableLine", left, top + rowHeight, width - (height * 1.05), lineWidth);
+				group++;
+				xtg += getRectangle("StonetoolsTableLine", left, top + childHeight, width - (height * 1.05), lineWidth);
+				group++;
+				xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Head", "CODE");
+				left += columnWidth;
+
+				if (item.optionname1) {
+					xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Head", item.optionname1.toUpperCase());
+					left += columnWidth;
+				}
+				if (item.optionname2) {
+					xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Head", item.optionname2.toUpperCase());
+					left += columnWidth;
+				}
+				if (item.optionname3) {
+					xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Head", item.optionname3.toUpperCase());
+					left += columnWidth;
+				}
+				xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Head", "PRICE");
+				group = columns;
+				top += rowHeight;
+				for (let i: number = 0; i < item.children.length && i < 2; i++) {
+					left = pos.x + (height * 1.05);
+
+					if (i % 2 != 0) {
+						xtg += getRectangle("StonetoolsTableRow", cellPaddingX, top, width - (height * 1.05), rowHeight);
+						group++;
+					}
+
+					xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Cell", item.children[i].sku);
+					left += columnWidth;
+					group++;
+					if (item.optionname1) {
+						xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue1);
+						left += columnWidth;
+						group++;
+					}
+					if (item.optionname2) {
+						xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue2);
+						left += columnWidth;
+						group++;
+					}
+					if (item.optionname3) {
+						xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue3);
+						left += columnWidth;
+						group++;
+					}
+					xtg += getTextbox(left+cellPaddingX, top+cellPaddingY, columnWidth-cellPaddingX, rowHeight, "Table Cell Price", item.children[i].onlineprice);
+					group++;
+					top += rowHeight;
+				}
+
+				xtg += getGroup(2 + group);
+			} else {
+				xtg += getGroup(2);
+			}
+			movePos(width, height + childHeight);
 			return xtg;
 		}
 
-		
+
+
+
 		function getGroup(frames: number): string {
 			let xtg: string = "";
 			xtg += "<&g(";
@@ -818,6 +903,14 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			xtg += "@" + style + ":";
 			return xtg;
 		}
+		function getTextbox(x: number, y: number, width: number, height: number, style: string, text: string): string {
+			let xtg: string = "";
+			xtg += startTextbox(x, y, width, height);
+			xtg += setStyle(style) + XString(text) + br;
+			xtg += endTextbox();
+			return xtg;
+		}
+
 		function startTextbox(x: number, y: number, width: number, height: number): string {
 			let xtg: string = "";
 			xtg += "<&tbu2(" + x + "," + y + "," + width + "," + height + ",0,0,,n,,,,,,,,,,,,,,,,\"Layer 3\",\"[Normal Text Frame]\")>";
@@ -828,13 +921,13 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			xtg += "<&te>";
 			return xtg;
 		}
-		
+
 		// function setColour(C: number, M: number, Y: number, K: number): string {
 		// 	return "<c\"C=" + C + " M=" + M + " Y=" + Y + " K=" + K + "\">";
 		// }
 
-		function setColour(name: "StonetoolsGreen"|"StonetoolsVeryDarkGrey"|"StonetoolsCopy"|"StonetoolsCopyDark"): string {
-			return "<c\""+name+"\">";
+		function setColour(name: "StonetoolsGreen" | "StonetoolsVeryDarkGrey" | "StonetoolsCopy" | "StonetoolsCopyDark" | "StonetoolsTableHead" | "StonetoolsTableRow"): string {
+			return "<c\"" + name + "\">";
 		}
 
 		function defaultColour(): string {
@@ -848,7 +941,7 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 			let angle: number = 0;
 
 			xtg += "<&pbu2(" + x + "," + y + "," + width + "," + height + "," + angle + "," + skew + ",,,,,,,,,,," + (width * .37) + "," + (height * .37) + ",0,0,0,0,\"" + image + "\",,,\"Layer 1\",\"[None]\")>";
-			
+
 			return xtg;
 		}
 
@@ -857,9 +950,9 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'],
 
 			let skew: number = 0;
 			let angle: number = 0;
-			xtg += "<&nbu2(" + x + "," + y + "," + width + "," + height + "," + angle + "," + skew + ",,n,0,(n,),,,\""+colour+"\",,,,\"Layer 2\",\"[Normal Graphics Frame]\")>";
-			
-			
+			xtg += "<&nbu2(" + x + "," + y + "," + width + "," + height + "," + angle + "," + skew + ",,n,0,(n,),,,\"" + colour + "\",,,,\"Layer 2\",\"[Normal Graphics Frame]\")>";
+
+
 			return xtg;
 		}
 

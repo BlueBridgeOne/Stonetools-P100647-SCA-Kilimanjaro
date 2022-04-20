@@ -364,31 +364,31 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
             var categories = runtime.getCurrentScript().getParameter({
                 name: 'custscript_c25_catalogue_categories'
             }).split(",");
-            var line_1, lastCategory = void 0, lastSubCategory = void 0, body_1 = "", xml_1 = "<Root>\r\n";
-            var catColumns = ["categoryname", "parentcategoryname", "breadcrumbs", "@parentcategorythumbnail"];
-            var itemColumns = ["displayname", "sku", "baseprice", "onlineprice", "description", "optionname1", "optionvalue1", "optionname2", "optionvalue2", "optionname3", "optionvalue3", "features", "instructions", "included", "techspecs", "safety", "recommended", "urlcomponent", "@image1", "@image2", "@image3"];
+            var line_1, lastCategory = void 0, lastSubCategory = void 0; //, body: string = "", xml: string = "<Root>\r\n";
+            // let catColumns: string[] = ["categoryname", "parentcategoryname", "breadcrumbs", "@parentcategorythumbnail"];
+            // let itemColumns: string[] = ["displayname", "sku", "baseprice", "onlineprice", "description", "optionname1", "optionvalue1", "optionname2", "optionvalue2", "optionname3", "optionvalue3", "features", "instructions", "included", "techspecs", "safety", "recommended", "urlcomponent", "@image1", "@image2", "@image3"];
             var childSearchObj = void 0;
             var catFolder = 646164;
             var columns = void 0, images_1, filteredImages_1, childIndex_1;
-            log.debug("Generate", "HTML");
+            log.debug("Generate", "XTG");
             var xtg = ""; //html: string = "",
             // html = "<head>";
             // html += getStyles();
             // html += "</head>\n<body width=\"" + getPDFSize().width + "\" height=\"" + getPDFSize().height + "\" >";
             // html += getFrontPage();
-            body_1 += "layout";
-            for (var i = 0; i < catColumns.length; i++) {
-                body_1 += "," + catColumns[i];
-            }
-            for (var i = 0; i < itemColumns.length; i++) {
-                body_1 += "," + itemColumns[i];
-            }
-            body_1 += "\r\n";
+            // body += "layout";
+            // for (let i: number = 0; i < catColumns.length; i++) {
+            // 	body += "," + catColumns[i];
+            // }
+            // for (let i: number = 0; i < itemColumns.length; i++) {
+            // 	body += "," + itemColumns[i];
+            // }
+            // body += "\r\n";
             xtg = "<v7.00><e9>\r\n";
             xtg += getXTGStyles();
             xtg += setOrigin(margin, margin);
             for (var j = 0; j < categories.length; j++) {
-                for (var i = 0; i < context.values.length; i++) {
+                var _loop_1 = function (i) {
                     line_1 = JSON.parse(context.values[i]);
                     if (line_1.parentcategoryname == categories[j]) {
                         //main category line
@@ -398,10 +398,10 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                                 xtg += getXTGNextPage();
                             }
                             lastCategory = categories[j];
-                            body_1 += CSVString("Category") + "," + CSVString(categories[j]) + ",," + CSVString(categories[j]) + "," + CSVString(line_1.parentcategorythumbnail_url);
-                            body_1 += addCommas(itemColumns.length);
-                            body_1 += "\r\n";
-                            xml_1 += "\t<Category><Name>" + XMLString(categories[j]) + "</Name><Image href=\"" + XMLString(line_1.parentcategorythumbnail_url) + "\"></Image></Category>\r\n";
+                            // body += CSVString("Category") + "," + CSVString(categories[j]) + ",," + CSVString(categories[j]) + "," + CSVString(line.parentcategorythumbnail_url);
+                            // body += addCommas(itemColumns.length);
+                            // body += "\r\n";
+                            // xml += "\t<Category><Name>" + XMLString(categories[j]) + "</Name><Image href=\"" + XMLString(line.parentcategorythumbnail_url) + "\"></Image></Category>\r\n";
                             //html += getPDFCategory(categories[j], line.parentcategorythumbnail_pdf);
                             xtg += getXTGCategory(categories[j], line_1.parentcategorythumbnail_url);
                         }
@@ -409,78 +409,90 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                         if (line_1.categoryname != lastSubCategory) {
                             //log.debug("Process Reduce", "sub cat " +line.parentcategoryname +" > "+line.categoryname);
                             lastCategory = categories[j];
-                            body_1 += CSVString("Subcategory") + "," + CSVString(categories[j]) + "," + CSVString(line_1.parentcategoryname) + "," + CSVString(line_1.parentcategoryname + " > " + line_1.categoryname) + ",";
-                            body_1 += addCommas(itemColumns.length);
-                            body_1 += "\r\n";
-                            xml_1 += "\t<SubCategory><Name>" + XMLString(line_1.categoryname) + "</Name><ParentName>" + XMLString(line_1.parentcategoryname) + "</ParentName><Breadcrumbs>" + XMLString(line_1.parentcategoryname + " > " + line_1.categoryname) + "</Breadcrumbs></SubCategory>\r\n";
+                            // body += CSVString("Subcategory") + "," + CSVString(categories[j]) + "," + CSVString(line.parentcategoryname) + "," + CSVString(line.parentcategoryname + " > " + line.categoryname) + ",";
+                            // body += addCommas(itemColumns.length);
+                            // body += "\r\n";
+                            // xml += "\t<SubCategory><Name>" + XMLString(line.categoryname) + "</Name><ParentName>" + XMLString(line.parentcategoryname) + "</ParentName><Breadcrumbs>" + XMLString(line.parentcategoryname + " > " + line.categoryname) + "</Breadcrumbs></SubCategory>\r\n";
                             //html += getPDFSubCategory(line.categoryname, line.parentcategoryname);
                             xtg += getXTGSubCategory(line_1.categoryname, line_1.parentcategoryname);
                         }
                         //item
                         log.debug("Process Reduce", i + "=" + JSON.stringify(line_1));
-                        var item = {
+                        var item_1 = {
                             layout: line_1.layout,
                             name: line_1.displayname,
                             sku: getSku(line_1.itemid),
-                            description: line_1.description
-                        };
+                            description: line_1.description,
+                            link: line_1.urlcomponent,
+                            matrix: line_1.matrix
+                        }, child_1;
                         images_1 = getImages(line_1.type, line_1.id);
                         //log.debug("images", JSON.stringify(images));
-                        xml_1 += "\t<" + line_1.layout + "Item>\r\n";
-                        body_1 += CSVString(line_1.layout) + "," + CSVString(categories[j]) + "," + CSVString(line_1.parentcategoryname) + "," + CSVString(line_1.parentcategoryname + " > " + line_1.categoryname) + ",," + CSVString(line_1.displayname) + "," + CSVString(getSku(line_1.itemid)) + "," + CSVString(!line_1.matrix && getPrice(line_1.baseprice)) + "," + CSVString(!line_1.matrix && getPrice(line_1.onlineprice || line_1.baseprice)) + "," + CSVString(line_1.description) + "," + CSVString(line_1.optionname1) + "," + CSVString(!line_1.matrix && line_1.optionvalue1) + "," + CSVString(line_1.optionname2) + "," + CSVString(!line_1.matrix && line_1.optionvalue2) + "," + CSVString(line_1.optionname3) + "," + CSVString(!line_1.matrix && line_1.optionvalue3) + "," + CSVString(line_1.features) + "," + CSVString(line_1.instructions) + "," + CSVString(line_1.included) + "," + CSVString(line_1.techspecs) + "," + CSVString(line_1.safety) + "," + CSVString(line_1.recommended) + "," + CSVString("https://www.stonetools.co.uk/" + line_1.urlcomponent) + "," + CSVString(images_1[0] && images_1[0].url) + "," + CSVString(images_1[1] && images_1[1].url) + "," + CSVString(images_1[2] && images_1[2].url);
-                        body_1 += "\r\n";
-                        xml_1 += "\t\t<Name>" + XMLString(line_1.displayname) + "</Name>\r\n";
-                        xml_1 += "\t\t<Sku>" + XMLString(getSku(line_1.itemid)) + "</Sku>\r\n";
+                        // xml += "\t<" + line.layout + "Item>\r\n";
+                        // body += CSVString(line.layout) + "," + CSVString(categories[j]) + "," + CSVString(line.parentcategoryname) + "," + CSVString(line.parentcategoryname + " > " + line.categoryname) + ",," + CSVString(line.displayname) + "," + CSVString(getSku(line.itemid)) + "," + CSVString(!line.matrix && getPrice(line.baseprice)) + "," + CSVString(!line.matrix && getPrice(line.onlineprice || line.baseprice)) + "," + CSVString(line.description) + "," + CSVString(line.optionname1) + "," + CSVString(!line.matrix && line.optionvalue1) + "," + CSVString(line.optionname2) + "," + CSVString(!line.matrix && line.optionvalue2) + "," + CSVString(line.optionname3) + "," + CSVString(!line.matrix && line.optionvalue3) + "," + CSVString(line.features) + "," + CSVString(line.instructions) + "," + CSVString(line.included) + "," + CSVString(line.techspecs) + "," + CSVString(line.safety) + "," + CSVString(line.recommended) + "," + CSVString("https://www.stonetools.co.uk/" + line.urlcomponent) + "," + CSVString(images[0] && images[0].url) + "," + CSVString(images[1] && images[1].url) + "," + CSVString(images[2] && images[2].url);
+                        // body += "\r\n";
+                        // xml += "\t\t<Name>" + XMLString(line.displayname) + "</Name>\r\n";
+                        // xml += "\t\t<Sku>" + XMLString(getSku(line.itemid)) + "</Sku>\r\n";
                         if (!line_1.matrix) {
-                            xml_1 += "\t\t<BasePrice>" + XMLString(getPrice(line_1.baseprice)) + "</BasePrice>\r\n";
-                            xml_1 += "\t\t<OnlinePrice>" + XMLString(getPrice(line_1.onlineprice || line_1.baseprice)) + "</OnlinePrice>\r\n";
-                            item.baseprice = line_1.baseprice;
-                            item.onlineprice = line_1.onlineprice || line_1.baseprice;
+                            // xml += "\t\t<BasePrice>" + XMLString(getPrice(line.baseprice)) + "</BasePrice>\r\n";
+                            // xml += "\t\t<OnlinePrice>" + XMLString(getPrice(line.onlineprice || line.baseprice)) + "</OnlinePrice>\r\n";
+                            item_1.baseprice = line_1.baseprice;
+                            item_1.onlineprice = line_1.onlineprice || line_1.baseprice;
                         }
-                        xml_1 += "\t\t<Description>" + XMLString(line_1.description) + "</Description>\r\n";
+                        //xml += "\t\t<Description>" + XMLString(line.description) + "</Description>\r\n";
                         if (line_1.features) {
-                            xml_1 += "\t\t<Features>" + XMLString(line_1.features) + "</Features>\r\n";
+                            //xml += "\t\t<Features>" + XMLString(line.features) + "</Features>\r\n";
+                            item_1.features = line_1.features;
                         }
                         if (line_1.instructions) {
-                            xml_1 += "\t\t<Instructions>" + XMLString(line_1.instructions) + "</Instructions>\r\n";
+                            //xml += "\t\t<Instructions>" + XMLString(line.instructions) + "</Instructions>\r\n";
+                            item_1.instructions = line_1.instructions;
                         }
                         if (line_1.included) {
-                            xml_1 += "\t\t<Included>" + XMLString(line_1.included) + "</Included>\r\n";
+                            //xml += "\t\t<Included>" + XMLString(line.included) + "</Included>\r\n";
+                            item_1.included = line_1.included;
                         }
                         if (line_1.techspecs) {
-                            xml_1 += "\t\t<TechSpecs>" + XMLString(line_1.techspecs) + "</TechSpecs>\r\n";
+                            // xml += "\t\t<TechSpecs>" + XMLString(line.techspecs) + "</TechSpecs>\r\n";
+                            item_1.techspecs = line_1.techspecs;
                         }
                         if (line_1.safety) {
-                            xml_1 += "\t\t<Safety>" + XMLString(line_1.safety) + "</Safety>\r\n";
+                            // xml += "\t\t<Safety>" + XMLString(line.safety) + "</Safety>\r\n";
+                            item_1.safety = line_1.safety;
                         }
                         if (line_1.recommended) {
-                            xml_1 += "\t\t<Recommended>" + XMLString(line_1.recommended) + "</Recommended>\r\n";
+                            // xml += "\t\t<Recommended>" + XMLString(line.recommended) + "</Recommended>\r\n";
+                            item_1.recommended = line_1.recommended;
                         }
-                        xml_1 += "\t\t<Link>https://www.stonetools.co.uk/" + XMLString(line_1.urlcomponent) + "</Link>\r\n";
+                        // xml += "\t\t<Link>https://www.stonetools.co.uk/" + XMLString(line.urlcomponent) + "</Link>\r\n";
                         if (images_1[0]) {
-                            xml_1 += "\t\t<Image1 href=\"" + XMLString(images_1[0].url) + "\"></Image1>\r\n";
-                            item.image1 = images_1[0].pdf;
-                            item.image1_url = images_1[0].url;
+                            // xml += "\t\t<Image1 href=\"" + XMLString(images[0].url) + "\"></Image1>\r\n";
+                            item_1.image1 = images_1[0].pdf;
+                            item_1.image1_url = images_1[0].url;
                         }
                         if (images_1[1]) {
-                            xml_1 += "\t\t<Image2 href=\"" + XMLString(images_1[1].url) + "\"></Image2>\r\n";
-                            item.image2 = images_1[1].pdf;
-                            item.image2_url = images_1[1].url;
+                            // xml += "\t\t<Image2 href=\"" + XMLString(images[1].url) + "\"></Image2>\r\n";
+                            item_1.image2 = images_1[1].pdf;
+                            item_1.image2_url = images_1[1].url;
                         }
                         if (images_1[2]) {
-                            xml_1 += "\t\t<Image3 href=\"" + XMLString(images_1[2].url) + "\"></Image3>\r\n";
-                            item.image3 = images_1[2].pdf;
-                            item.image3_url = images_1[2].url;
+                            // xml += "\t\t<Image3 href=\"" + XMLString(images[2].url) + "\"></Image3>\r\n";
+                            item_1.image3 = images_1[2].pdf;
+                            item_1.image3_url = images_1[2].url;
                         }
                         if (line_1.optionname1) {
-                            xml_1 += "\t\t<Option1><Label>" + XMLString(line_1.optionname1) + "</Label></Option1>\r\n";
+                            // xml += "\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label></Option1>\r\n";
+                            item_1.optionname1 = line_1.optionname1;
                         }
                         if (line_1.optionname2) {
-                            xml_1 += "\t\t<Option2><Label>" + XMLString(line_1.optionname2) + "</Label></Option2>\r\n";
+                            // xml += "\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label></Option2>\r\n";
+                            item_1.optionname2 = line_1.optionname2;
                         }
                         if (line_1.optionname3) {
-                            xml_1 += "\t\t<Option3><Label>" + XMLString(line_1.optionname3) + "</Label></Option3>\r\n";
+                            // xml += "\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label></Option3>\r\n";
+                            item_1.optionname3 = line_1.optionname3;
                         }
+                        item_1.children = [];
                         if (line_1.matrix) {
                             //log.debug("Find Children For", line.id);
                             //children
@@ -517,45 +529,61 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                             childIndex_1 = 0;
                             childSearchObj.run().each(function (result) {
                                 //log.debug("Child", result.id);
+                                child_1 = {
+                                    name: line_1.displayname,
+                                    sku: getSku(result.getValue("itemid")),
+                                    baseprice: getPrice(result.getValue("baseprice")),
+                                    onlineprice: getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))
+                                };
                                 childIndex_1++;
                                 filteredImages_1 = filterImages(images_1, line_1, result);
-                                body_1 += CSVString(line_1.layout) + "Child" + (childIndex_1 % 2 == 0 ? "Even" : "Odd") + ",,,,," + CSVString(result.getValue("displayname")) + "," + CSVString(getSku(result.getValue("itemid"))) + "," + CSVString(getPrice(result.getValue("baseprice"))) + "," + CSVString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + ",," + CSVString(line_1.optionname1) + "," + CSVString(line_1.optionid1 && result.getText(line_1.optionid1)) + "," + CSVString(line_1.optionname2) + "," + CSVString(line_1.optionid2 && result.getText(line_1.optionid2)) + "," + CSVString(line_1.optionname3) + "," + CSVString(line_1.optionid3 && result.getText(line_1.optionid3)) + ",,,,,,,,," + CSVString(filteredImages_1[0] && filteredImages_1[0].url) + "," + CSVString(filteredImages_1[1] && filteredImages_1[1].url) + "," + CSVString(filteredImages_1[2] && filteredImages_1[2].url);
-                                body_1 += "\r\n";
-                                xml_1 += "\t\t<" + line_1.layout + "Child" + (childIndex_1 % 2 == 0 ? "Even" : "Odd") + ">\r\n";
-                                xml_1 += "\t\t\t<Name>" + XMLString(line_1.displayname) + "</Name>\r\n";
-                                xml_1 += "\t\t\t<Sku>" + XMLString(getSku(result.getValue("itemid"))) + "</Sku>\r\n";
-                                xml_1 += "\t\t\t<BasePrice>" + XMLString(getPrice(result.getValue("baseprice"))) + "</BasePrice>\r\n";
-                                xml_1 += "\t\t\t<OnlinePrice>" + XMLString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + "</OnlinePrice>\r\n";
+                                // body += CSVString(line.layout) + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ",,,,," + CSVString(result.getValue("displayname")) + "," + CSVString(getSku(result.getValue("itemid"))) + "," + CSVString(getPrice(result.getValue("baseprice"))) + "," + CSVString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + ",," + CSVString(line.optionname1) + "," + CSVString(line.optionid1 && result.getText(line.optionid1)) + "," + CSVString(line.optionname2) + "," + CSVString(line.optionid2 && result.getText(line.optionid2)) + "," + CSVString(line.optionname3) + "," + CSVString(line.optionid3 && result.getText(line.optionid3)) + ",,,,,,,,," + CSVString(filteredImages[0] && filteredImages[0].url) + "," + CSVString(filteredImages[1] && filteredImages[1].url) + "," + CSVString(filteredImages[2] && filteredImages[2].url);
+                                // body += "\r\n";
+                                // xml += "\t\t<" + line.layout + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ">\r\n";
+                                // xml += "\t\t\t<Name>" + XMLString(line.displayname) + "</Name>\r\n";
+                                // xml += "\t\t\t<Sku>" + XMLString(getSku(result.getValue("itemid"))) + "</Sku>\r\n";
+                                // xml += "\t\t\t<BasePrice>" + XMLString(getPrice(result.getValue("baseprice"))) + "</BasePrice>\r\n";
+                                // xml += "\t\t\t<OnlinePrice>" + XMLString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + "</OnlinePrice>\r\n";
                                 if (line_1.optionname1) {
-                                    xml_1 += "\t\t\t<Option1><Label>" + XMLString(line_1.optionname1) + "</Label><Value>" + XMLString(result.getText(line_1.optionid1)) + "</Value></Option1>\r\n";
+                                    // xml += "\t\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label><Value>" + XMLString(result.getText(line.optionid1)) + "</Value></Option1>\r\n";
+                                    child_1.optionvalue1 = result.getText(line_1.optionid1);
                                 }
                                 if (line_1.optionname2) {
-                                    xml_1 += "\t\t\t<Option2><Label>" + XMLString(line_1.optionname2) + "</Label>><Value>" + XMLString(result.getText(line_1.optionid2)) + "</Value></Option2>\r\n";
+                                    // xml += "\t\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label>><Value>" + XMLString(result.getText(line.optionid2)) + "</Value></Option2>\r\n";
+                                    child_1.optionvalue2 = result.getText(line_1.optionid2);
                                 }
                                 if (line_1.optionname3) {
-                                    xml_1 += "\t\t\t<Option3><Label>" + XMLString(line_1.optionname3) + "</Label>><Value>" + XMLString(result.getText(line_1.optionid3)) + "</Value></Option3>\r\n";
+                                    // xml += "\t\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label>><Value>" + XMLString(result.getText(line.optionid3)) + "</Value></Option3>\r\n";
+                                    child_1.optionvalue3 = result.getText(line_1.optionid3);
                                 }
                                 if (filteredImages_1[0]) {
-                                    xml_1 += "\t\t\t<Image1 href=\"" + XMLString(filteredImages_1[0].url) + "\"></Image1>\r\n";
+                                    // xml += "\t\t\t<Image1 href=\"" + XMLString(filteredImages[0].url) + "\"></Image1>\r\n";
+                                    child_1.image1 = filteredImages_1[0].url;
                                 }
                                 if (filteredImages_1[1]) {
-                                    xml_1 += "\t\t\t<Image2 href=\"" + XMLString(filteredImages_1[1].url) + "\"></Image2>\r\n";
+                                    // xml += "\t\t\t<Image2 href=\"" + XMLString(filteredImages[1].url) + "\"></Image2>\r\n";
+                                    child_1.image2 = filteredImages_1[1].url;
                                 }
                                 if (filteredImages_1[2]) {
-                                    xml_1 += "\t\t\t<Image3 href=\"" + XMLString(filteredImages_1[2].url) + "\"></Image3>\r\n";
+                                    // xml += "\t\t\t<Image3 href=\"" + XMLString(filteredImages[2].url) + "\"></Image3>\r\n";
+                                    child_1.image3 = filteredImages_1[2].url;
                                 }
-                                xml_1 += "\t\t</" + line_1.layout + "Child" + (childIndex_1 % 2 == 0 ? "Even" : "Odd") + ">\r\n";
+                                item_1.children.push(child_1);
+                                // xml += "\t\t</" + line.layout + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ">\r\n";
                                 return true;
                             });
                         }
                         //end of children
-                        xml_1 += "\t</" + line_1.layout + "Item>\r\n";
+                        // xml += "\t</" + line.layout + "Item>\r\n";
                         //html += getPDFItem(item);
-                        xtg += getXTGItem(item);
+                        xtg += getXTGItem(item_1);
                     }
+                };
+                for (var i = 0; i < context.values.length; i++) {
+                    _loop_1(i);
                 }
             }
-            xml_1 += "</Root>";
+            // xml += "</Root>";
             //html += "</body>";
             //log.debug("CSV", body);
             var date = new Date();
@@ -566,10 +594,11 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                     break;
             }
             filename += date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "-Catalogue";
-            var newFile = file.create({ folder: catFolder, contents: body_1, name: filename + ".csv", encoding: "UTF-8", fileType: "CSV" });
-            newFile.save();
-            newFile = file.create({ folder: catFolder, contents: xml_1, name: filename + ".xml", encoding: "UTF-8", fileType: "XMLDOC" });
-            newFile.save();
+            var newFile = void 0;
+            // newFile = file.create({ folder: catFolder, contents: body, name: filename + ".csv", encoding: "UTF-8", fileType: "CSV" });
+            // newFile.save();
+            // newFile = file.create({ folder: catFolder, contents: xml, name: filename + ".xml", encoding: "UTF-8", fileType: "XMLDOC" });
+            // newFile.save();
             // newFile = file.create({ folder: catFolder, contents: "<html>" + html + "</html>", name: filename + ".html", encoding: "UTF-8", fileType: "HTMLDOC" });
             // newFile.save();
             newFile = file.create({ folder: catFolder, contents: xtg, name: filename + ".xtg", encoding: "UTF-8", fileType: "PLAINTEXT" });
@@ -606,6 +635,9 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         xtg += "@NormalParagraphStyle=[S\"\",\"NormalParagraphStyle\"]<z16f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
         xtg += "@Category Title=[S\"\",\"Category Title\"]<z30f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
         xtg += "@Sub Category=[S\"\",\"Sub Category\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+        xtg += "@Table Head=[S\"\",\"Table Head\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsTableHead") + br;
+        xtg += "@Table Cell=[S\"\",\"Table Cell\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+        xtg += "@Table Cell Price=[S\"\",\"Table Cell Price\"]<z10f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
         var layouts = ["Small", "Medium", "Large", "Hero"];
         for (var i = 0; i < layouts.length; i++) {
             xtg += "@" + layouts[i] + " Item Title=[S\"\",\"" + layouts[i] + " Item Title\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
@@ -646,16 +678,88 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
     function getXTGItem(item) {
         var xtg = "";
         var width = innerSize.width, height = innerSize.height * .2;
-        xtg += checkForNewPage(width, height);
+        var rowHeight = innerSize.height * .022, childHeight = item.matrix ? (1 + item.children.length) * rowHeight : 0, lineWidth = innerSize.height * .0015, cellPaddingX = innerSize.height * .01, cellPaddingY = innerSize.height * .003;
+        xtg += checkForNewPage(width, height + childHeight);
         xtg += getPicture(item.image1_url, pos.x, pos.y, height, height);
         xtg += startTextbox(pos.x + (height * 1.05), pos.y, width - (height * 1.05), height);
         xtg += setStyle(item.layout + " Item Title") + XString(item.name) + br;
         xtg += setStyle(item.layout + " Item Sku") + "CODE: " + XString(item.sku) + br + br;
         xtg += setStyle(item.layout + " Item Description") + XString(item.description) + br + br;
-        xtg += setStyle(item.layout + " Item Price") + XString(getPrice(item.onlineprice || "0.00")) + br;
+        if (!item.matrix) {
+            xtg += setStyle(item.layout + " Item Price") + XString(getPrice(item.onlineprice || "0.00")) + br;
+        }
         xtg += endTextbox();
-        xtg += getGroup(2);
-        movePos(width, height);
+        //children
+        if (item.matrix) {
+            var group = void 0, columns = 2;
+            if (item.optionname1) {
+                columns++;
+            }
+            if (item.optionname2) {
+                columns++;
+            }
+            if (item.optionname3) {
+                columns++;
+            }
+            var columnWidth = (width - (height * 1.05)) / columns;
+            var left = pos.x + (height * 1.05), top_1 = pos.y + height;
+            xtg += getRectangle("StonetoolsTableLine", left, top_1, width - (height * 1.05), lineWidth);
+            group++;
+            xtg += getRectangle("StonetoolsTableLine", left, top_1 + rowHeight, width - (height * 1.05), lineWidth);
+            group++;
+            xtg += getRectangle("StonetoolsTableLine", left, top_1 + childHeight, width - (height * 1.05), lineWidth);
+            group++;
+            xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "CODE");
+            left += columnWidth;
+            if (item.optionname1) {
+                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname1.toUpperCase());
+                left += columnWidth;
+            }
+            if (item.optionname2) {
+                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname2.toUpperCase());
+                left += columnWidth;
+            }
+            if (item.optionname3) {
+                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname3.toUpperCase());
+                left += columnWidth;
+            }
+            xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "PRICE");
+            group = columns;
+            top_1 += rowHeight;
+            for (var i = 0; i < item.children.length && i < 2; i++) {
+                left = pos.x + (height * 1.05);
+                if (i % 2 != 0) {
+                    xtg += getRectangle("StonetoolsTableRow", cellPaddingX, top_1, width - (height * 1.05), rowHeight);
+                    group++;
+                }
+                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].sku);
+                left += columnWidth;
+                group++;
+                if (item.optionname1) {
+                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue1);
+                    left += columnWidth;
+                    group++;
+                }
+                if (item.optionname2) {
+                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue2);
+                    left += columnWidth;
+                    group++;
+                }
+                if (item.optionname3) {
+                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue3);
+                    left += columnWidth;
+                    group++;
+                }
+                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell Price", item.children[i].onlineprice);
+                group++;
+                top_1 += rowHeight;
+            }
+            xtg += getGroup(2 + group);
+        }
+        else {
+            xtg += getGroup(2);
+        }
+        movePos(width, height + childHeight);
         return xtg;
     }
     function getGroup(frames) {
@@ -674,6 +778,13 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         if (style === void 0) { style = "$"; }
         var xtg = "";
         xtg += "@" + style + ":";
+        return xtg;
+    }
+    function getTextbox(x, y, width, height, style, text) {
+        var xtg = "";
+        xtg += startTextbox(x, y, width, height);
+        xtg += setStyle(style) + XString(text) + br;
+        xtg += endTextbox();
         return xtg;
     }
     function startTextbox(x, y, width, height) {

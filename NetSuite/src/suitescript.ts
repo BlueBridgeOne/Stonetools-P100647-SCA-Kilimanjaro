@@ -52,6 +52,10 @@ interface iName {
     label?:string;
     sort?:"ASC"|"DESC";
 }
+interface iSearchName {
+    name: string;
+    join?: string;
+}
 interface iPageSize {
     pageSize: number;
 }
@@ -98,11 +102,13 @@ interface iFieldIdValue {
 
     fieldId: string;
     value: any;
+    ignoreFieldChange?:boolean;
 }
 interface iFieldTextValue {
 
     fieldId: string;
-    value: string;
+    text: string;
+    ignoreFieldChange?:boolean;
 }
 interface iSublistIdLineRecalc {
     sublistId: string;
@@ -282,7 +288,7 @@ interface iDataRecord {
     removeLine: (sublistIdLineRecalc: iSublistIdLineRecalc) => void;
     getSublistSubrecord: (sublistIdFieldIdLine: iSublistIdFieldIdLine) => iDataRecord;
     setSublistValue: (sublistIdFieldIdLineValue: iSublistIdFieldIdLineValue) => void;
-    save: (saveOptions: iRecordSaveOptions) => string;
+    save: (saveOptions?: iRecordSaveOptions) => string;
     selectNewLine: (sublistId: iSublistId) => iDataRecord;
     selectLine: (sublistIdLine: iSublistIdLine) => iDataRecord;
     setCurrentSublistText: (text: iCurrentSublistIdFieldIdText) => iDataRecord;
@@ -310,7 +316,7 @@ interface iColumn {
 interface iSearchResult {
     id: string;
     getValue: (id: string) => any;
-    getText: (id: string) => string;
+    getText: (id: string|iSearchName) => string;
     values: any;
 }
 type SearchResultFunction = (res: iSearchResult) => {};
@@ -364,8 +370,13 @@ interface iFormatOptions{
     value:any;
     type:any;
 }
+interface iFormatOptions{
+    value:any;
+    type:any;
+}
 interface iFormat {
     format(options:iFormatOptions);
+    parse(options:iFormatOptions);
     Type:any;
 }
 
