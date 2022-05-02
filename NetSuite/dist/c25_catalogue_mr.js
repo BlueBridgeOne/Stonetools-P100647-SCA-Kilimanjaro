@@ -64,6 +64,8 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                 search.createColumn({ name: "onlineprice" }),
                 search.createColumn({ name: "custitem_c25_cataloguelayout" }),
                 search.createColumn({ name: "custitem_c25_cataloguedesc" }),
+                search.createColumn({ name: "custitem_c25_cataloguefeatures" }),
+                search.createColumn({ name: "custitem_c25_cataloguesequence" }),
                 search.createColumn({ name: "commercecategoryname", sort: "ASC" }),
                 search.createColumn({ name: "commercecategoryisprimary" }),
                 search.createColumn({ name: "storedetaileddescription" }),
@@ -326,13 +328,14 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                 onlineprice: searchResult.values.onlineprice || searchResult.values.baseprice,
                 layout: (searchResult.values.custitem_c25_cataloguelayout && searchResult.values.custitem_c25_cataloguelayout.text) || "Small",
                 description: cleanHTML(searchResult.values.custitem_c25_cataloguedesc || searchResult.values.storedetaileddescription),
-                features: cleanHTML(searchResult.values.custitem_bb1_sca_features_en),
+                features: cleanHTML(searchResult.values.custitem_c25_cataloguefeatures || searchResult.values.custitem_bb1_sca_features_en),
                 instructions: cleanHTML(searchResult.values.custitem_bb1_sca_instructions_en),
                 included: cleanHTML(searchResult.values.custitem_bb1_sca_included_en),
                 techspecs: cleanHTML(searchResult.values.custitem_bb1_sca_techspecs_en),
                 safety: cleanHTML(searchResult.values.custitem_bb1_sca_safety_en),
                 recommended: cleanHTML(searchResult.values.custitem_bb1_sca_recommended_en),
-                urlcomponent: searchResult.values.urlcomponent
+                urlcomponent: searchResult.values.urlcomponent,
+                sequence: searchResult.values.custitem_c25_cataloguesequence || 1
             };
             var facetNumber = 0;
             for (var i = 0; i < facets.length; i++) {
@@ -365,28 +368,27 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                 name: 'custscript_c25_catalogue_categories'
             }).split(",");
             var line_1, lastCategory = void 0, lastSubCategory = void 0; //, body: string = "", xml: string = "<Root>\r\n";
-            // let catColumns: string[] = ["categoryname", "parentcategoryname", "breadcrumbs", "@parentcategorythumbnail"];
-            // let itemColumns: string[] = ["displayname", "sku", "baseprice", "onlineprice", "description", "optionname1", "optionvalue1", "optionname2", "optionvalue2", "optionname3", "optionvalue3", "features", "instructions", "included", "techspecs", "safety", "recommended", "urlcomponent", "@image1", "@image2", "@image3"];
             var childSearchObj = void 0;
             var catFolder = 646164;
             var columns = void 0, images_1, filteredImages_1, childIndex_1;
             log.debug("Generate", "XTG");
-            var xtg = ""; //html: string = "",
-            // html = "<head>";
-            // html += getStyles();
-            // html += "</head>\n<body width=\"" + getPDFSize().width + "\" height=\"" + getPDFSize().height + "\" >";
-            // html += getFrontPage();
-            // body += "layout";
-            // for (let i: number = 0; i < catColumns.length; i++) {
-            // 	body += "," + catColumns[i];
-            // }
-            // for (let i: number = 0; i < itemColumns.length; i++) {
-            // 	body += "," + itemColumns[i];
-            // }
-            // body += "\r\n";
+            var xtg = "";
             xtg = "<v7.00><e9>\r\n";
             xtg += getXTGStyles();
             xtg += setOrigin(margin, margin);
+            //sort sequence
+            var swap = void 0, change = void 0;
+            do {
+                change = false;
+                for (var i = 0; i < context.values.length - 1; i++) {
+                    if (context.values[i].sequence > context.values[i + 1]) {
+                        swap = context.values[i];
+                        context.values[i] = context.values[i + 1];
+                        context.values[i + 1] = swap;
+                        change = true;
+                    }
+                }
+            } while (change);
             for (var j = 0; j < categories.length; j++) {
                 var _loop_1 = function (i) {
                     line_1 = JSON.parse(context.values[i]);
@@ -398,22 +400,12 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                                 xtg += getXTGNextPage();
                             }
                             lastCategory = categories[j];
-                            // body += CSVString("Category") + "," + CSVString(categories[j]) + ",," + CSVString(categories[j]) + "," + CSVString(line.parentcategorythumbnail_url);
-                            // body += addCommas(itemColumns.length);
-                            // body += "\r\n";
-                            // xml += "\t<Category><Name>" + XMLString(categories[j]) + "</Name><Image href=\"" + XMLString(line.parentcategorythumbnail_url) + "\"></Image></Category>\r\n";
-                            //html += getPDFCategory(categories[j], line.parentcategorythumbnail_pdf);
                             xtg += getXTGCategory(categories[j], line_1.parentcategorythumbnail_url);
                         }
                         //sub category line
                         if (line_1.categoryname != lastSubCategory) {
                             //log.debug("Process Reduce", "sub cat " +line.parentcategoryname +" > "+line.categoryname);
                             lastCategory = categories[j];
-                            // body += CSVString("Subcategory") + "," + CSVString(categories[j]) + "," + CSVString(line.parentcategoryname) + "," + CSVString(line.parentcategoryname + " > " + line.categoryname) + ",";
-                            // body += addCommas(itemColumns.length);
-                            // body += "\r\n";
-                            // xml += "\t<SubCategory><Name>" + XMLString(line.categoryname) + "</Name><ParentName>" + XMLString(line.parentcategoryname) + "</ParentName><Breadcrumbs>" + XMLString(line.parentcategoryname + " > " + line.categoryname) + "</Breadcrumbs></SubCategory>\r\n";
-                            //html += getPDFSubCategory(line.categoryname, line.parentcategoryname);
                             xtg += getXTGSubCategory(line_1.categoryname, line_1.parentcategoryname);
                         }
                         //item
@@ -428,68 +420,47 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                         }, child_1;
                         images_1 = getImages(line_1.type, line_1.id);
                         //log.debug("images", JSON.stringify(images));
-                        // xml += "\t<" + line.layout + "Item>\r\n";
-                        // body += CSVString(line.layout) + "," + CSVString(categories[j]) + "," + CSVString(line.parentcategoryname) + "," + CSVString(line.parentcategoryname + " > " + line.categoryname) + ",," + CSVString(line.displayname) + "," + CSVString(getSku(line.itemid)) + "," + CSVString(!line.matrix && getPrice(line.baseprice)) + "," + CSVString(!line.matrix && getPrice(line.onlineprice || line.baseprice)) + "," + CSVString(line.description) + "," + CSVString(line.optionname1) + "," + CSVString(!line.matrix && line.optionvalue1) + "," + CSVString(line.optionname2) + "," + CSVString(!line.matrix && line.optionvalue2) + "," + CSVString(line.optionname3) + "," + CSVString(!line.matrix && line.optionvalue3) + "," + CSVString(line.features) + "," + CSVString(line.instructions) + "," + CSVString(line.included) + "," + CSVString(line.techspecs) + "," + CSVString(line.safety) + "," + CSVString(line.recommended) + "," + CSVString("https://www.stonetools.co.uk/" + line.urlcomponent) + "," + CSVString(images[0] && images[0].url) + "," + CSVString(images[1] && images[1].url) + "," + CSVString(images[2] && images[2].url);
-                        // body += "\r\n";
-                        // xml += "\t\t<Name>" + XMLString(line.displayname) + "</Name>\r\n";
-                        // xml += "\t\t<Sku>" + XMLString(getSku(line.itemid)) + "</Sku>\r\n";
                         if (!line_1.matrix) {
-                            // xml += "\t\t<BasePrice>" + XMLString(getPrice(line.baseprice)) + "</BasePrice>\r\n";
-                            // xml += "\t\t<OnlinePrice>" + XMLString(getPrice(line.onlineprice || line.baseprice)) + "</OnlinePrice>\r\n";
                             item_1.baseprice = line_1.baseprice;
                             item_1.onlineprice = line_1.onlineprice || line_1.baseprice;
                         }
-                        //xml += "\t\t<Description>" + XMLString(line.description) + "</Description>\r\n";
                         if (line_1.features) {
-                            //xml += "\t\t<Features>" + XMLString(line.features) + "</Features>\r\n";
                             item_1.features = line_1.features;
                         }
                         if (line_1.instructions) {
-                            //xml += "\t\t<Instructions>" + XMLString(line.instructions) + "</Instructions>\r\n";
                             item_1.instructions = line_1.instructions;
                         }
                         if (line_1.included) {
-                            //xml += "\t\t<Included>" + XMLString(line.included) + "</Included>\r\n";
                             item_1.included = line_1.included;
                         }
                         if (line_1.techspecs) {
-                            // xml += "\t\t<TechSpecs>" + XMLString(line.techspecs) + "</TechSpecs>\r\n";
                             item_1.techspecs = line_1.techspecs;
                         }
                         if (line_1.safety) {
-                            // xml += "\t\t<Safety>" + XMLString(line.safety) + "</Safety>\r\n";
                             item_1.safety = line_1.safety;
                         }
                         if (line_1.recommended) {
-                            // xml += "\t\t<Recommended>" + XMLString(line.recommended) + "</Recommended>\r\n";
                             item_1.recommended = line_1.recommended;
                         }
-                        // xml += "\t\t<Link>https://www.stonetools.co.uk/" + XMLString(line.urlcomponent) + "</Link>\r\n";
                         if (images_1[0]) {
-                            // xml += "\t\t<Image1 href=\"" + XMLString(images[0].url) + "\"></Image1>\r\n";
                             item_1.image1 = images_1[0].pdf;
                             item_1.image1_url = images_1[0].url;
                         }
                         if (images_1[1]) {
-                            // xml += "\t\t<Image2 href=\"" + XMLString(images[1].url) + "\"></Image2>\r\n";
                             item_1.image2 = images_1[1].pdf;
                             item_1.image2_url = images_1[1].url;
                         }
                         if (images_1[2]) {
-                            // xml += "\t\t<Image3 href=\"" + XMLString(images[2].url) + "\"></Image3>\r\n";
                             item_1.image3 = images_1[2].pdf;
                             item_1.image3_url = images_1[2].url;
                         }
                         if (line_1.optionname1) {
-                            // xml += "\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label></Option1>\r\n";
                             item_1.optionname1 = line_1.optionname1;
                         }
                         if (line_1.optionname2) {
-                            // xml += "\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label></Option2>\r\n";
                             item_1.optionname2 = line_1.optionname2;
                         }
                         if (line_1.optionname3) {
-                            // xml += "\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label></Option3>\r\n";
                             item_1.optionname3 = line_1.optionname3;
                         }
                         item_1.children = [];
@@ -537,45 +508,29 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                                 };
                                 childIndex_1++;
                                 filteredImages_1 = filterImages(images_1, line_1, result);
-                                // body += CSVString(line.layout) + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ",,,,," + CSVString(result.getValue("displayname")) + "," + CSVString(getSku(result.getValue("itemid"))) + "," + CSVString(getPrice(result.getValue("baseprice"))) + "," + CSVString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + ",," + CSVString(line.optionname1) + "," + CSVString(line.optionid1 && result.getText(line.optionid1)) + "," + CSVString(line.optionname2) + "," + CSVString(line.optionid2 && result.getText(line.optionid2)) + "," + CSVString(line.optionname3) + "," + CSVString(line.optionid3 && result.getText(line.optionid3)) + ",,,,,,,,," + CSVString(filteredImages[0] && filteredImages[0].url) + "," + CSVString(filteredImages[1] && filteredImages[1].url) + "," + CSVString(filteredImages[2] && filteredImages[2].url);
-                                // body += "\r\n";
-                                // xml += "\t\t<" + line.layout + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ">\r\n";
-                                // xml += "\t\t\t<Name>" + XMLString(line.displayname) + "</Name>\r\n";
-                                // xml += "\t\t\t<Sku>" + XMLString(getSku(result.getValue("itemid"))) + "</Sku>\r\n";
-                                // xml += "\t\t\t<BasePrice>" + XMLString(getPrice(result.getValue("baseprice"))) + "</BasePrice>\r\n";
-                                // xml += "\t\t\t<OnlinePrice>" + XMLString(getPrice(result.getValue("onlineprice") || result.getValue("baseprice"))) + "</OnlinePrice>\r\n";
                                 if (line_1.optionname1) {
-                                    // xml += "\t\t\t<Option1><Label>" + XMLString(line.optionname1) + "</Label><Value>" + XMLString(result.getText(line.optionid1)) + "</Value></Option1>\r\n";
                                     child_1.optionvalue1 = result.getText(line_1.optionid1);
                                 }
                                 if (line_1.optionname2) {
-                                    // xml += "\t\t\t<Option2><Label>" + XMLString(line.optionname2) + "</Label>><Value>" + XMLString(result.getText(line.optionid2)) + "</Value></Option2>\r\n";
                                     child_1.optionvalue2 = result.getText(line_1.optionid2);
                                 }
                                 if (line_1.optionname3) {
-                                    // xml += "\t\t\t<Option3><Label>" + XMLString(line.optionname3) + "</Label>><Value>" + XMLString(result.getText(line.optionid3)) + "</Value></Option3>\r\n";
                                     child_1.optionvalue3 = result.getText(line_1.optionid3);
                                 }
                                 if (filteredImages_1[0]) {
-                                    // xml += "\t\t\t<Image1 href=\"" + XMLString(filteredImages[0].url) + "\"></Image1>\r\n";
                                     child_1.image1 = filteredImages_1[0].url;
                                 }
                                 if (filteredImages_1[1]) {
-                                    // xml += "\t\t\t<Image2 href=\"" + XMLString(filteredImages[1].url) + "\"></Image2>\r\n";
                                     child_1.image2 = filteredImages_1[1].url;
                                 }
                                 if (filteredImages_1[2]) {
-                                    // xml += "\t\t\t<Image3 href=\"" + XMLString(filteredImages[2].url) + "\"></Image3>\r\n";
                                     child_1.image3 = filteredImages_1[2].url;
                                 }
                                 item_1.children.push(child_1);
-                                // xml += "\t\t</" + line.layout + "Child" + (childIndex % 2 == 0 ? "Even" : "Odd") + ">\r\n";
                                 return true;
                             });
                         }
                         //end of children
-                        // xml += "\t</" + line.layout + "Item>\r\n";
-                        //html += getPDFItem(item);
                         xtg += getXTGItem(item_1);
                     }
                 };
@@ -583,9 +538,6 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                     _loop_1(i);
                 }
             }
-            // xml += "</Root>";
-            //html += "</body>";
-            //log.debug("CSV", body);
             var date = new Date();
             var filename = "";
             switch (custscript_c25_catalogue_catalogue) {
@@ -594,24 +546,8 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
                     break;
             }
             filename += date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "-Catalogue";
-            var newFile = void 0;
-            // newFile = file.create({ folder: catFolder, contents: body, name: filename + ".csv", encoding: "UTF-8", fileType: "CSV" });
-            // newFile.save();
-            // newFile = file.create({ folder: catFolder, contents: xml, name: filename + ".xml", encoding: "UTF-8", fileType: "XMLDOC" });
-            // newFile.save();
-            // newFile = file.create({ folder: catFolder, contents: "<html>" + html + "</html>", name: filename + ".html", encoding: "UTF-8", fileType: "HTMLDOC" });
-            // newFile.save();
-            newFile = file.create({ folder: catFolder, contents: xtg, name: filename + ".xtg", encoding: "UTF-8", fileType: "PLAINTEXT" });
+            var newFile = file.create({ folder: catFolder, contents: xtg, name: filename + ".xtg", encoding: "UTF-8", fileType: "PLAINTEXT" });
             newFile.save();
-            // let pdf: string = "<?xml version=\"1.0\"?>";
-            // pdf += "<!DOCTYPE pdf PUBLIC \"-//big.faceless.org//reportLAP\" \"reportLAP-18.1.dtd\">\n";
-            // pdf += "<pdf>"
-            // pdf += html;
-            // pdf += "</pdf>"
-            // newFile = render.xmlToPdf({ xmlString: pdf });
-            // newFile.name = filename + ".pdf";
-            // newFile.folder = catFolder;
-            // newFile.save();
         }
     }
     // 
@@ -635,12 +571,20 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         xtg += "@NormalParagraphStyle=[S\"\",\"NormalParagraphStyle\"]<z16f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
         xtg += "@Category Title=[S\"\",\"Category Title\"]<z30f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
         xtg += "@Sub Category=[S\"\",\"Sub Category\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
-        xtg += "@Table Head=[S\"\",\"Table Head\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsTableHead") + br;
-        xtg += "@Table Cell=[S\"\",\"Table Cell\"]<z10f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
-        xtg += "@Table Cell Price=[S\"\",\"Table Cell Price\"]<z10f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
-        var layouts = ["Small", "Medium", "Large", "Hero"];
+        xtg += "@Table Head=[S\"\",\"Table Head\"]<z9f\"Roboto-Regular\">" + setColour("StonetoolsTableHead") + br;
+        xtg += "@Table Cell=[S\"\",\"Table Cell\"]<z9f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
+        xtg += "@Table Cell Price=[S\"\",\"Table Cell Price\"]<z9f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
+        xtg += "@QR Url=[S\"\",\"QR Url\"]<z9f\"Roboto-Regular\">" + setColour("Black") + br;
+        var layouts = ["Small", "Medium", "Large", "Hero", "Compare"];
         for (var i = 0; i < layouts.length; i++) {
-            xtg += "@" + layouts[i] + " Item Title=[S\"\",\"" + layouts[i] + " Item Title\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+            if (layouts[i] == "Hero") {
+                xtg += "@" + layouts[i] + " Item Title=[S\"\",\"" + layouts[i] + " Item Title\"]<z24f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+                xtg += "@" + layouts[i] + " Item Subtitle=[S\"\",\"" + layouts[i] + " Item Subtitle\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+            }
+            else {
+                xtg += "@" + layouts[i] + " Item Title=[S\"\",\"" + layouts[i] + " Item Title\"]<z16f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+                xtg += "@" + layouts[i] + " Item Subtitle=[S\"\",\"" + layouts[i] + " Item Subtitle\"]<z12f\"Roboto-Regular\"><B>" + setColour("StonetoolsCopyDark") + br;
+            }
             xtg += "@" + layouts[i] + " Item Sku=[S\"\",\"" + layouts[i] + " Item Sku\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
             xtg += "@" + layouts[i] + " Item Description=[S\"\",\"" + layouts[i] + " Item Description\"]<z12f\"Roboto-Regular\">" + setColour("StonetoolsCopy") + br;
             xtg += "@" + layouts[i] + " Item Price=[S\"\",\"" + layouts[i] + " Item Price\"]<z12f\"Roboto-Regular\"><B>" + setColour("StonetoolsGreen") + br;
@@ -649,7 +593,7 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
     }
     function getXTGCategory(name, image) {
         var xtg = "";
-        var width = innerSize.width, height = innerSize.height * .25;
+        var width = innerSize.width, height = innerSize.height * .25, medheight = height * .41;
         xtg += checkForNewPage(width, height);
         var scale = [.3, .5, .7, .9], ix = width * .15;
         for (var i = 0; i < scale.length; i++) {
@@ -660,7 +604,11 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         xtg += startTextbox(pos.x, pos.y + (height * .375), width, height * .25);
         xtg += setStyle("Category Title") + XString(name);
         xtg += endTextbox();
-        xtg += getGroup(2);
+        var link = name;
+        link = link.toLowerCase();
+        link = link.split(" ").join("-");
+        xtg += getQR("https://www.stonetools.co.uk/" + link, pos.x + innerSize.width - medheight, pos.y, medheight, medheight);
+        xtg += getGroup(3);
         movePos(width, height);
         return xtg;
     }
@@ -677,89 +625,191 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
     }
     function getXTGItem(item) {
         var xtg = "";
-        var width = innerSize.width, height = innerSize.height * .2;
-        var rowHeight = innerSize.height * .022, childHeight = item.matrix ? (1 + item.children.length) * rowHeight : 0, lineWidth = innerSize.height * .0015, cellPaddingX = innerSize.height * .01, cellPaddingY = innerSize.height * .003;
-        xtg += checkForNewPage(width, height + childHeight);
-        xtg += getPicture(item.image1_url, pos.x, pos.y, height, height);
-        xtg += startTextbox(pos.x + (height * 1.05), pos.y, width - (height * 1.05), height);
+        var width = innerSize.width, height = innerSize.height * .2, group = 2;
+        var rowHeight = innerSize.height * .022, childHeight = item.matrix ? (1 + item.children.length) * rowHeight : 0;
+        var spacing = rowHeight = innerSize.height * .01, extraImageHeight = 0;
+        var fontWidth = innerSize.height * .0075;
+        var isLarge = item.layout == "Hero" || item.layout == "Large";
+        var isSmall = item.layout == "Small" || item.layout == "Medium";
+        if (item.layout == "Medium") {
+            width = (width - spacing) / 2;
+            height = innerSize.height * .2;
+        }
+        else if (item.layout == "Small" || item.layout == "Compare") {
+            width = (width - spacing - spacing) / 3;
+            height = innerSize.height * .14;
+        }
+        var text = item.name + "\n" + item.sku + "\n\n" + item.description + "\n\n";
+        if (item.features && (isLarge || item.layout == "Compare")) {
+            text += "Features\n" + item.features + "\n";
+            if (item.layout == "Hero" || item.layout == "Compare") {
+                xtg += "\n";
+            }
+        }
+        if (!item.matrix) {
+            text += "0.00\n";
+        }
+        var descWidth = width - (height * 1.05);
+        if (isSmall || item.layout == "Hero" || item.layout == "Compare") {
+            descWidth = width;
+        }
+        var textHeight = guessHeight(text, descWidth, fontWidth);
+        if ((item.image2_url || item.image3_url) && isLarge) {
+            extraImageHeight = (height + spacing) / 2;
+        }
+        if (item.layout == "Compare" || item.layout == "Hero") {
+            xtg += checkForNewPage(width, innerSize.height - .1);
+        }
+        else {
+            xtg += checkForNewPage(width, Math.max(textHeight, height) + Math.max(childHeight, extraImageHeight));
+        }
+        if (isSmall) {
+            xtg += getPicture(item.image1_url, pos.x + ((width - height) / 2), pos.y, height, height);
+            xtg += startTextbox(pos.x, pos.y + height + spacing, width, textHeight);
+        }
+        else if (item.layout == "Compare") {
+            xtg += getPicture(item.image1_url, pos.x, pos.y, width, width);
+            xtg += startTextbox(pos.x, pos.y + width + spacing, width, innerSize.height - width - childHeight - spacing - spacing);
+        }
+        else if (item.layout == "Hero") {
+            var bigHeight = height * 1.75, medheight = height * .85;
+            xtg += getPicture(item.image1_url, pos.x, pos.y, bigHeight, bigHeight);
+            if (item.image2_url) {
+                xtg += getPicture(item.image2_url, pos.x + bigHeight + spacing, pos.y, medheight, medheight);
+                group++;
+            }
+            if (item.image3_url) {
+                xtg += getPicture(item.image3_url, pos.x + bigHeight, pos.y + spacing + medheight, medheight, medheight);
+                group++;
+            }
+            xtg += getQR("https://www.stonetools.co.uk/" + item.link, pos.x + innerSize.width - medheight, pos.y, medheight, medheight);
+            group++;
+            xtg += startTextbox(pos.x, pos.y + bigHeight + spacing, descWidth, innerSize.height - bigHeight - childHeight - spacing - spacing);
+        }
+        else {
+            xtg += getPicture(item.image1_url, pos.x, pos.y, height, height);
+            if (item.image2_url && isLarge) {
+                xtg += getPicture(item.image2_url, pos.x, pos.y + height + spacing, (height - spacing) / 2, (height - spacing) / 2);
+                group++;
+            }
+            if (item.image3_url && isLarge) {
+                xtg += getPicture(item.image3_url, pos.x + ((height + spacing) / 2), pos.y + height + spacing, (height - spacing) / 2, (height - spacing) / 2);
+                group++;
+            }
+            if (item.layout == "Compare") {
+                xtg += startTextbox(pos.x + (height * 1.05), pos.y, descWidth, innerSize.height - height - childHeight - spacing - spacing);
+            }
+            else {
+                xtg += startTextbox(pos.x + (height * 1.05), pos.y, descWidth, Math.max(textHeight, height));
+            }
+        }
         xtg += setStyle(item.layout + " Item Title") + XString(item.name) + br;
         xtg += setStyle(item.layout + " Item Sku") + "CODE: " + XString(item.sku) + br + br;
         xtg += setStyle(item.layout + " Item Description") + XString(item.description) + br + br;
+        if (item.features && (isLarge || item.layout == "Compare")) {
+            xtg += setStyle(item.layout + " Item Subtitle") + XString("Features") + br;
+            if (item.layout == "Hero" || item.layout == "Compare") {
+                xtg += br;
+            }
+            xtg += setStyle(item.layout + " Item Description") + XString(item.features) + br + br;
+        }
         if (!item.matrix) {
             xtg += setStyle(item.layout + " Item Price") + XString(getPrice(item.onlineprice || "0.00")) + br;
         }
         xtg += endTextbox();
         //children
         if (item.matrix) {
-            var group = void 0, columns = 2;
-            if (item.optionname1) {
-                columns++;
+            if (isSmall) {
+                xtg += getMatrixOptions(item, pos.x, pos.y + textHeight + height, descWidth);
             }
-            if (item.optionname2) {
-                columns++;
+            else if (item.layout == "Compare" || item.layout == "Hero") {
+                xtg += getMatrixOptions(item, pos.x, pos.y + innerSize.height - childHeight, descWidth);
             }
-            if (item.optionname3) {
-                columns++;
+            else {
+                xtg += getMatrixOptions(item, pos.x + (height * 1.05), pos.y + Math.max(textHeight, height), descWidth);
             }
-            var columnWidth = (width - (height * 1.05)) / columns;
-            var left = pos.x + (height * 1.05), top_1 = pos.y + height;
-            xtg += getRectangle("StonetoolsTableLine", left, top_1, width - (height * 1.05), lineWidth);
             group++;
-            xtg += getRectangle("StonetoolsTableLine", left, top_1 + rowHeight, width - (height * 1.05), lineWidth);
-            group++;
-            xtg += getRectangle("StonetoolsTableLine", left, top_1 + childHeight, width - (height * 1.05), lineWidth);
-            group++;
-            xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "CODE");
-            left += columnWidth;
-            if (item.optionname1) {
-                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname1.toUpperCase());
-                left += columnWidth;
-            }
-            if (item.optionname2) {
-                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname2.toUpperCase());
-                left += columnWidth;
-            }
-            if (item.optionname3) {
-                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname3.toUpperCase());
-                left += columnWidth;
-            }
-            xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "PRICE");
-            group = columns;
-            top_1 += rowHeight;
-            for (var i = 0; i < item.children.length && i < 2; i++) {
-                left = pos.x + (height * 1.05);
-                if (i % 2 != 0) {
-                    xtg += getRectangle("StonetoolsTableRow", cellPaddingX, top_1, width - (height * 1.05), rowHeight);
-                    group++;
-                }
-                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].sku);
-                left += columnWidth;
-                group++;
-                if (item.optionname1) {
-                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue1);
-                    left += columnWidth;
-                    group++;
-                }
-                if (item.optionname2) {
-                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue2);
-                    left += columnWidth;
-                    group++;
-                }
-                if (item.optionname3) {
-                    xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue3);
-                    left += columnWidth;
-                    group++;
-                }
-                xtg += getTextbox(left + cellPaddingX, top_1 + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell Price", item.children[i].onlineprice);
-                group++;
-                top_1 += rowHeight;
-            }
-            xtg += getGroup(2 + group);
+        }
+        xtg += getGroup(group);
+        if (isSmall) {
+            movePos(width + spacing, textHeight + height + spacing + childHeight);
+        }
+        else if (item.layout == "Hero") {
+            movePos(width, innerSize.height);
         }
         else {
-            xtg += getGroup(2);
+            movePos(width, Math.max(textHeight, height) + Math.max(childHeight, extraImageHeight));
         }
-        movePos(width, height + childHeight);
+        return xtg;
+    }
+    function getMatrixOptions(item, left, top, tableWidth) {
+        var xtg = "";
+        var height = innerSize.height * .2;
+        var lineWidth = innerSize.height * .0015, cellPaddingX = innerSize.height * .01, cellPaddingY = innerSize.height * .003;
+        var group = 0, columns = 2;
+        var rowHeight = innerSize.height * .022, childHeight = item.matrix ? (1 + item.children.length) * rowHeight : 0, originalLeft = left;
+        if (item.optionname1) {
+            columns++;
+        }
+        if (item.optionname2) {
+            columns++;
+        }
+        if (item.optionname3) {
+            columns++;
+        }
+        var columnWidth = tableWidth / columns;
+        xtg += getRectangle("StonetoolsTableLine", left, top, tableWidth, lineWidth);
+        group++;
+        xtg += getRectangle("StonetoolsTableLine", left, top + rowHeight, tableWidth, lineWidth);
+        group++;
+        xtg += getRectangle("StonetoolsTableLine", left, top + childHeight, tableWidth, lineWidth);
+        group++;
+        xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "CODE");
+        left += columnWidth;
+        if (item.optionname1) {
+            xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname1.toUpperCase());
+            left += columnWidth;
+        }
+        if (item.optionname2) {
+            xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname2.toUpperCase());
+            left += columnWidth;
+        }
+        if (item.optionname3) {
+            xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", item.optionname3.toUpperCase());
+            left += columnWidth;
+        }
+        xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Head", "PRICE");
+        group += columns;
+        top += rowHeight;
+        for (var i = 0; i < item.children.length; i++) {
+            left = originalLeft;
+            if (i % 2 != 0) {
+                xtg += getRectangle("StonetoolsTableRow", left, top, tableWidth, rowHeight);
+                group++;
+            }
+            xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].sku);
+            left += columnWidth;
+            group++;
+            if (item.optionname1) {
+                xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue1);
+                left += columnWidth;
+                group++;
+            }
+            if (item.optionname2) {
+                xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue2);
+                left += columnWidth;
+                group++;
+            }
+            if (item.optionname3) {
+                xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell", item.children[i].optionvalue3);
+                left += columnWidth;
+                group++;
+            }
+            xtg += getTextbox(left + cellPaddingX, top + cellPaddingY, columnWidth - cellPaddingX, rowHeight, "Table Cell Price", item.children[i].onlineprice);
+            group++;
+            top += rowHeight;
+        }
+        xtg += getGroup(group);
         return xtg;
     }
     function getGroup(frames) {
@@ -789,7 +839,7 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
     }
     function startTextbox(x, y, width, height) {
         var xtg = "";
-        xtg += "<&tbu2(" + x + "," + y + "," + width + "," + height + ",0,0,,n,,,,,,,,,,,,,,,,\"Layer 3\",\"[Normal Text Frame]\")>";
+        xtg += "<&tbu2(" + x.toFixed(2) + "," + y.toFixed(2) + "," + width.toFixed(2) + "," + height.toFixed(2) + ",0,0,,n,,,,,,,,,,,,,,,,\"Layer 1\",\"[Normal Text Frame]\")>";
         return xtg;
     }
     function endTextbox() {
@@ -797,9 +847,6 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         xtg += "<&te>";
         return xtg;
     }
-    // function setColour(C: number, M: number, Y: number, K: number): string {
-    // 	return "<c\"C=" + C + " M=" + M + " Y=" + Y + " K=" + K + "\">";
-    // }
     function setColour(name) {
         return "<c\"" + name + "\">";
     }
@@ -810,14 +857,29 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         var xtg = "";
         var skew = 0;
         var angle = 0;
-        xtg += "<&pbu2(" + x + "," + y + "," + width + "," + height + "," + angle + "," + skew + ",,,,,,,,,,," + (width * .37) + "," + (height * .37) + ",0,0,0,0,\"" + image + "\",,,\"Layer 1\",\"[None]\")>";
+        xtg += "<&pbu2(" + x.toFixed(2) + "," + y.toFixed(2) + "," + width.toFixed(2) + "," + height.toFixed(2) + "," + angle + "," + skew + ",,,,,,,,,,," + (width * .37) + "," + (height * .37) + ",0,0,0,0,\"" + image + "\",,,\"Layer 1\",\"[None]\")>";
+        return xtg;
+    }
+    function getQR(url, x, y, width, height) {
+        var xtg = "";
+        var skew = 0;
+        var angle = 0;
+        var border = height * .05;
+        x += border + border;
+        y += border + border;
+        width -= border * 4;
+        height -= border * 4;
+        xtg += getRectangle("StonetoolsTableHead", x, y, width, height);
+        xtg += getRectangle("Paper", x + border, y + border, width - border - border, height - border - border);
+        xtg += getTextbox(x + border, y + border, width - border - border, height - border - border, "QR Url", url);
+        xtg += getGroup(3);
         return xtg;
     }
     function getRectangle(colour, x, y, width, height) {
         var xtg = "";
         var skew = 0;
         var angle = 0;
-        xtg += "<&nbu2(" + x + "," + y + "," + width + "," + height + "," + angle + "," + skew + ",,n,0,(n,),,,\"" + colour + "\",,,,\"Layer 2\",\"[Normal Graphics Frame]\")>";
+        xtg += "<&nbu2(" + x.toFixed(2) + "," + y.toFixed(2) + "," + width.toFixed(2) + "," + height.toFixed(2) + "," + angle + "," + skew + ",,n,0,(n,),,,\"" + colour + "\",,,,\"Layer 1\",\"[Normal Graphics Frame]\")>";
         return xtg;
     }
     function movePos(width, height) {
@@ -850,89 +912,32 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/render'], function (re
         xtg += "<\\n>";
         return xtg;
     }
-    // function getPDFSubCategory(name: string, parent: string): string {
-    // 	let pdf: string = "";
-    // 	pdf += "<div class=\"subcategory\">";
-    // 	pdf += "<p>" + XMLString(parent.toUpperCase()) + " <span class=\"subcategory__title\">/ " + XMLString(name.toUpperCase()) + "</span></p>";
-    // 	pdf += "</div>";
-    // 	return pdf;
-    // }
-    // function getFrontPage(): string {
-    // 	let pdf: string = "";
-    // 	let months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    // 	let date: Date = new Date();
-    // 	pdf += "<div class=\"frontpage\">";
-    // 	pdf += "<div class=\"frontpage__title\">";
-    // 	pdf += "<img class=\"frontpage__logo\" src=\"/core/media/media.nl?id=801463&amp;c=4554490&amp;h=8HYrKilpXJPoyAIclDRLa5brZJmNdjMljEBliXtOCw5h7EyF\" />";
-    // 	pdf += "<h1 class=\"frontpage__year\">" + months[date.getMonth()] + " " + date.getFullYear() + "</h1>";
-    // 	pdf += "</div>";
-    // 	pdf += "<img class=\"frontpage__image\" src=\"/core/media/media.nl?id=140367&amp;c=4554490&amp;h=-AAlULxJVDIkf-jGB6MV3JWS-f8zH39FuKBVaV8ECdv6OtVC\" />";
-    // 	pdf += "<div class=\"frontpage__footer\"><p>Next Day Delivery</p></div>";
-    // 	pdf += "</div>";
-    // 	return pdf;
-    // }
-    // function getPDFItem(item: any): string {
-    // 	let pdf: string = "";
-    // 	pdf += "<div class=\"item\">";
-    // 	pdf += "<table><tr>";
-    // 	pdf += "<td class=\"item__image__container\"><img class=\"item__image\" src=\"" + XMLString(item.image1) + "\" /></td>";
-    // 	pdf += "<td class=\"item__details\"><p class=\"item__title\">" + XMLString(item.name) + "</p><p class=\"item__sku\"><span class=\"item__label\">CODE:</span> " + XMLString(item.sku) + "</p><p class=\"item__description\">" + XMLString(item.description) + "</p><p class=\"item__price\">" + XMLString(getPrice(item.onlineprice || "0.00")) + "</p></td>";
-    // 	pdf += "</tr></table>";
-    // 	pdf += "</div>";
-    // 	return pdf;
-    // }
-    //function getPDFSize(): any {
-    // 	return { width: 794, height: 1123 };
-    // }
-    // function getStyles(): string {
-    // 	let pdf: string = "", size: any = getPDFSize();
-    // 	let font: string = "font-family:Helvetica;";
-    // 	let pagePadding = (getPDFSize().width * .05) + "px";
-    // 	//pdf+="<link name=\"Roboto\" src=\"https://fonts.googleapis.com/css2?family=Roboto\" type=\"font\" subtype=\"TrueType\" />";
-    // 	pdf += "<style type=\"text/css\">";
-    // 	pdf += "*{font-family: Roboto, sans-serif;}";
-    // 	pdf += "body{margin:0;padding:0;" + font + "color:#444444;}";
-    // 	pdf += ".frontpage{height:" + (size.height) + ";}";
-    // 	pdf += ".frontpage__title{width:" + (size.width) + ";height:" + (size.height * .3) + ";background-color:#303030;}";
-    // 	pdf += ".frontpage__footer{width:" + (size.width) + ";height:" + (size.height * .1) + ";background-color:#303030;}";
-    // 	pdf += ".frontpage__image{width:" + ((1200 / 598) * size.height * .6) + ";height:" + (size.height * .6) + ";}";
-    // 	let logoWidth: number = ((601 / 92) * size.height * .05);
-    // 	pdf += ".frontpage__logo{position:absolute;left:" + ((size.width - logoWidth) / 2) + ";top:" + (size.height * .1) + ";width:" + logoWidth + ";height:" + (size.height * .05) + ";}";
-    // 	pdf += ".frontpage__year{" + font + "font-size:" + (size.width * .05) + "px;color:white;font-weight:bold;text-align:center;position:absolute;left:0;width:100%;height:30%;top:" + (size.height * .15) + ";}";
-    // 	pdf += ".category{height:" + (size.height * .4) + ";position:relative;}";
-    // 	pdf += ".category__overlay{position: absolute;left: 0;top: 0;bottom: 0;width: 100%;height: 100%;background-color: alpha(50%,#222222);}";
-    // 	let scalex: number[] = [.16, .19, .22, .25];
-    // 	let scaley: number[] = [.08, .09, .10, .11];
-    // 	for (var i = 0; i < 4; i++) {
-    // 		pdf += ".category__image" + (i + 1) + "{position:absolute;left:" + (size.width * (.05 + (i * scalex[i]))) + "px;top:" + (size.height * (.34 - (i * scaley[i]))) + "px;width:" + (size.width * (.18 + (i * .08))) + "px;height:" + (size.width * (.18 + (i * .08))) + "px;}";
-    // 	}
-    // 	pdf += ".category__title{" + font + "font-size:" + (size.width * .075) + "px;color:white;font-weight:bold;text-align:center;position:absolute;left:0;width:100%;height:30%;top:38%;}";
-    // 	pdf += ".subcategory{padding-left:" + pagePadding + ";padding-right:" + pagePadding + ";" + font + "font-size:" + (size.width * .03) + "px;height:" + (size.height * .04) + ";color:#7e7e7e;}";
-    // 	pdf += ".subcategory__title{color:#444444;}";
-    // 	pdf += ".item{padding-left:" + pagePadding + ";padding-right:" + pagePadding + ";}";
-    // 	pdf += ".item__image{width:" + (size.width * .25) + ";height:" + (size.width * .25) + ";}";
-    // 	pdf += ".item__image__container{width:" + (size.width * .25) + ";height:" + (size.width * .25) + ";border:1px solid #d2d2d2;}";
-    // 	pdf += ".item__details{padding-left:" + (size.width * .025) + ";}";
-    // 	pdf += ".item__title{" + font + "font-size:" + (size.width * .035) + "px;color:#444444;}";
-    // 	pdf += ".item__sku{" + font + "font-size:" + (size.width * .02) + "px;color:#767676;}";
-    // 	pdf += ".item__description{" + font + "font-size:" + (size.width * .02) + "px;color:#767676;}";
-    // 	pdf += ".item__price{" + font + "font-size:" + (size.width * .035) + "px;color:#00cf8b;}";
-    // 	pdf += ".item__label{color:#afafaf;}";
-    // 	pdf += "</style>";
-    // 	return pdf;
-    // }
-    // function getPDFCategory(name: string, image: string): string {
-    // 	let pdf: string = "";
-    // 	pdf += "<div class=\"category\">";
-    // 	pdf += "<img class=\"category__image1\" src=\"" + XMLString(image) + "\" />";
-    // 	pdf += "<img class=\"category__image2\" src=\"" + XMLString(image) + "\" />";
-    // 	pdf += "<img class=\"category__image3\" src=\"" + XMLString(image) + "\" />";
-    // 	pdf += "<img class=\"category__image4\" src=\"" + XMLString(image) + "\" />";
-    // 	pdf += "<div class=\"category__overlay\"></div>";
-    // 	pdf += "<h1 class=\"category__title\">" + XMLString(name) + "</h1>";
-    // 	pdf += "</div>";
-    // 	return pdf;
-    // }
+    function guessHeight(text, width, fontWidth) {
+        var x = 0, y = 0, fontHeight = fontWidth * 1.4, line = "";
+        y += fontHeight;
+        for (var i = 0; i < text.length; i++) {
+            if (text.charAt(i) == "\n") {
+                x = 0;
+                y += fontHeight;
+                //log.debug("Return",line);
+                line = "";
+            }
+            else {
+                x += fontWidth;
+                line += text.charAt(i);
+                if (x > width) {
+                    x = fontWidth;
+                    y += fontHeight;
+                    //log.debug("End of Line",line.substring(0,line.length-1));
+                    line = text.charAt(i);
+                }
+            }
+        }
+        if (x > 0) {
+            y += fontHeight;
+        }
+        return y;
+    }
     /**
      * Executes when the summarize entry point is triggered and applies to the result set.
      *
